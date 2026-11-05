@@ -1931,7 +1931,8 @@ html:not(.js) #sim .sim-zoom,html:not(.js) #sim .sim-qrow,html:not(.js) #sim .si
   title     = {Perceptive Humanoid Motion from Simulation},
   author    = {Hu, Siyuan and Abuduweili, Abulikemu and Meng, Yue and Liu, Shipeng and Leboutet, Quentin and
                Chen, Chen and M{\"u}ller, Matthias and Koltun, Vladlen},
-  journal   = {arXiv preprint},
+  journal   = {arXiv preprint arXiv:2611.06908},
+  url       = {https://arxiv.org/abs/2611.06908},
   year      = {2026}
 }</pre>
       </div>
@@ -1956,7 +1957,7 @@ window.HALO = (() => {
   const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   const H = {
     /* Links: fill these in when the artefacts exist. Empty = tasteful "Soon" state. */
-    LINKS: { paper: 'https://arxiv.org/', code: 'https://github.com/apple-aiml-research/ml-halo' },
+    LINKS: { paper: 'https://arxiv.org/abs/2611.06908', code: 'https://github.com/apple-aiml-research/ml-halo' },
     get reduced() { return mq.matches; },
     onReducedChange(cb) { mq.addEventListener ? mq.addEventListener('change', cb) : mq.addListener(cb); },
     /* cb(true|false) whenever el enters / leaves the viewport (with margin). Use it to pause rAF loops. */

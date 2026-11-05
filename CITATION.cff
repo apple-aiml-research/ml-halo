@@ -20,9 +20,9 @@ authors:
   - family-names: Koltun
     given-names: Vladlen
 preferred-citation:
-  # TODO(release): add the arXiv identifier and URL once the preprint is posted.
   type: article
-  journal: "arXiv preprint"
+  journal: "arXiv preprint arXiv:2611.06908"
+  url: "https://arxiv.org/abs/2611.06908"
   title: "Perceptive Humanoid Motion from Simulation"
   authors:
     - family-names: Hu

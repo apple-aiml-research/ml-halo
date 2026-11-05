@@ -1,7 +1,7 @@
 # HALO: Perceptive Humanoid Motion from Simulation
 
 [![Project Page](https://img.shields.io/badge/Project-Page-green)](https://apple-aiml-research.github.io/ml-halo/)
-[![arXiv](https://img.shields.io/badge/arXiv-Paper-b31b1b.svg)](https://arxiv.org/)
+[![arXiv](https://img.shields.io/badge/arXiv-2611.06908-b31b1b.svg)](https://arxiv.org/abs/2611.06908)
 
 <!-- TODO(release): authors. -->
 
@@ -56,7 +56,8 @@ If you find this work useful, please cite:
   title     = {Perceptive Humanoid Motion from Simulation},
   author    = {Hu, Siyuan and Abuduweili, Abulikemu and Meng, Yue and Liu, Shipeng and Leboutet, Quentin and
                Chen, Chen and M{\"u}ller, Matthias and Koltun, Vladlen},
-  journal   = {arXiv preprint},
+  journal   = {arXiv preprint arXiv:2611.06908},
+  url       = {https://arxiv.org/abs/2611.06908},
   year      = {2026}
 }
 ```
