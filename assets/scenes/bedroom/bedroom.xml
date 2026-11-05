@@ -1,0 +1,75 @@
+<!-- bedroom: a furnished bedroom with a partition wall and a half-open door, an armchair, a table, a box
+     and a person. The room (bedroom_room.xml) is visual only; the robot stands on an invisible ground
+     plane at z = 0. Collision: partition, chair (seat + back boxes) and box. Object meshes are in objects/. -->
+<mujoco model="bedroom">
+  <compiler angle="radian" meshdir="../../robots/g1/meshes" texturedir="."/>
+  <option gravity="0 0 -9.81" timestep="0.002"/>
+  <statistic center="3.70 2.10 1.0" extent="4.0"/>
+  <visual>
+    <global offwidth="1920" offheight="1080"/>
+    <map znear="0.005" zfar="20"/>
+    <headlight ambient="1 1 1" diffuse="0 0 0" specular="0 0 0"/>   <!-- the room textures are pre-lit -->
+  </visual>
+
+  <asset>
+    <mesh name="arm_chair" file="../../../scenes/bedroom/objects/arm_chair.obj"/>
+    <texture name="chair_tex" type="2d" file="objects/arm_chair.png"/>
+    <material name="chair_mat" texture="chair_tex"/>
+    <mesh name="door" file="../../../scenes/bedroom/objects/door.obj"/>
+    <texture name="door_tex" type="2d" file="objects/door_tex.png"/>
+    <material name="door_mat" texture="door_tex"/>
+    <mesh name="object5" file="../../../scenes/bedroom/objects/object5.obj" scale="1 1.423267 1"/>   <!-- table top at 1.225 m -->
+    <texture name="o5t" type="2d" file="objects/object5_diffuse.png"/>
+    <material name="o5m" texture="o5t"/>
+    <mesh name="box_object" file="../../../scenes/bedroom/objects/box_object.obj"/>
+    <texture name="box_tex" type="2d" file="objects/box_object.png"/>
+    <material name="box_mat" texture="box_tex"/>
+    <mesh name="suitman" file="../../../scenes/bedroom/objects/suitman.obj"/>
+    <texture name="human_tex" type="2d" file="objects/suitman.png"/>
+    <material name="human_mat" texture="human_tex"/>
+  </asset>
+
+  <include file="bedroom_room.xml"/>
+  <include file="g1_29dof_macmini_sysid_scene.xml"/>
+
+  <worldbody>
+    <geom name="ground" type="plane" size="25 25 0.1" rgba="0 0 0 0" contype="1" conaffinity="1"/>
+
+    <!-- Partition wall across the room (x = 4.6) with a 0.9 m doorway (y 1.95-2.85) and a lintel. -->
+    <geom name="partition_0" type="box" size="1.2250 0.0500 1.3500" pos="4.6000 4.0750 1.3500" euler="0 0 -1.57080" rgba="0.277 0.311 0.286 1" contype="1" conaffinity="1"/>
+    <geom name="partition_1" type="box" size="0.8000 0.0500 1.3500" pos="4.6000 1.1500 1.3500" euler="0 0 -1.57080" rgba="0.277 0.311 0.286 1" contype="1" conaffinity="1"/>
+    <geom name="partition_lintel" type="box" size="0.4500 0.0500 0.3250" pos="4.6000 2.4000 2.3750" euler="0 0 1.57080" rgba="0.277 0.311 0.286 1" contype="1" conaffinity="1"/>
+
+    <!-- Door leaf, hinged at (4.6, 1.95), 40 deg open. Visual only. -->
+    <body name="door_leaf" pos="4.6000 1.9500 0.0000" quat="0.422618 0.000000 0.000000 -0.906308">
+      <geom type="mesh" mesh="door" material="door_mat" pos="-0.4684 0 -0.0996" euler="1.5708 0 0" contype="0" conaffinity="0"/></body>
+
+    <!-- Armchair beyond the door, seat facing the doorway. -->
+    <body name="chair" pos="6.9140 4.7078 0.0000" quat="0.939693 0.000000 0.000000 -0.342020">
+      <geom name="chair_visual" type="mesh" mesh="arm_chair" material="chair_mat" quat="0.70711 0.70711 0 0" contype="0" conaffinity="0"/>
+      <geom name="chair_seat" type="box" pos="0 0 0.22" size="0.40 0.40 0.22" rgba="0 0 0 0" contype="1" conaffinity="1" group="3"/>
+      <geom name="chair_back" type="box" pos="0 0.36 0.62" size="0.40 0.08 0.22" rgba="0 0 0 0" contype="1" conaffinity="1" group="3"/></body>
+
+    <!-- Table across the left lane (crouch_under_table). -->
+    <body name="object5_root" pos="3.5000 2.9000 0.0750" quat="0.707107 0.707107 0.000000 0.000000">
+      <geom type="mesh" mesh="object5" material="o5m" contype="0" conaffinity="0"/></body>
+
+    <!-- Box on the right side, pushed toward -y (push_box). -->
+    <body name="box_object" pos="6.4000 3.0000 0.0867" quat="0.707107 0.000000 0.000000 -0.707107">
+      <freejoint/>
+      <inertial pos="0 0 0.285" mass="0.5" diaginertia="0.017 0.017 0.017"/>
+      <geom name="box_visual" type="mesh" mesh="box_object" material="box_mat" contype="0" conaffinity="0"/>
+      <geom name="box_collision" type="mesh" mesh="box_object" rgba="0 0 0 0" contype="1" conaffinity="1" friction="0.6 0.1 0.1"/></body>
+
+    <!-- Person at the end of the left lane, facing the robot (go_to_man). Visual only. -->
+    <body name="human" pos="3.7000 4.0000 0.0000" quat="1.000000 0.000000 0.000000 0.000000">
+      <geom name="human_mesh" type="mesh" mesh="suitman" material="human_mat" contype="0" conaffinity="0"/></body>
+  </worldbody>
+
+  <!-- home: robot standing at the doorway start (3.7, 2.1) facing +x, then the box free joint.
+       Tasks set their own start pose. -->
+  <keyframe>
+    <key name="home" qpos="3.7 2.1 0.79 1 0 0 -0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+                            6.4000 3.0000 0.0867 0.707107 0.000000 0.000000 -0.707107"/>
+  </keyframe>
+</mujoco>

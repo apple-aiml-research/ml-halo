@@ -1,0 +1,64 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Motion-quality thresholds for the walk_and_sit / sit_on_chair task.
+# Overlays default.yaml and sit.yaml.
+#
+# Set from human labels on 50 rendered sit episodes. Bump
+# motion_gen/motion_check/version.py CHECKER_VERSION when editing this file.
+
+# ---- severities -----------------------------------------------------------
+# Mild planted-foot slip (p95 13-18 cm/s) and arm-near-hip hull overlap (~4.5 cm,
+# a convex-hull over-report) also occur on motions rated acceptable. As soft
+# checks they lower the score and still report their frames, but do not block
+# acceptance.
+severity_overrides:
+  foot_skate: soft
+  self_collision: soft
+  # Hard: on the labeled set these fire on bad motions and not on acceptable ones.
+  small_hop: hard         # hops
+  vertical_drift: hard    # pelvis drifts upward
+  feet_close: hard        # heels / ankles collide
+  turn_rate: hard         # implausibly fast spin
+  step_clearance: hard    # low shuffle / mincing / bumpy steps
+  walk_leg_angle: hard    # swing leg lifts too high (e.g. 21 cm)
+  walk_pause: hard        # gait stall / glide without stepping in WALK/TURN
+  walk_torso_bend: hard   # torso bends forward mid-walk (e.g. 30 deg)
+  flight_phase: hard      # both feet airborne
+  upper_body_speed: hard  # jerky arms
+  crab_walk: hard         # sideways locomotion
+
+# ---- detector thresholds (strict) -----------------------------------------
+# The "good" labels are only acceptable rather than clean, so some good motions
+# are rejected in exchange for catching more bad ones. Per value, on the 50
+# labeled episodes (bad caught / good rejected): small_hop 5 cm (18/3),
+# feet_close 12.5 cm (8/0), turn_rate 230 deg/s (10/1), vertical_drift 3 cm.
+# foot_skate stays soft: good motions also skate 12-33 cm/s.
+dyn_hop_prominence_m: 0.05
+feet_close_min_m: 0.125
+dyn_turn_rate_dps: 230.0
+dyn_drift_up_m: 0.03
+# flight_phase also catches feet floating ~3 cm (inconsistent ground contact):
+# in those episodes the lower foot rises to ~3 cm, while good motions keep it
+# <= 1.8 cm, so one such frame is enough (no false positives on good motions).
+# min_run=1 catches the brief float, not just hops.
+flight_min_run: 1
+
+# ---- score weights --------------------------------------------------------
+# The judge score is a weighted mean of per-check scores. Foot skate, pausing,
+# wide stance, self collision, feet collision and hops get 3x weight, so they
+# dominate the score and the best-of-N ranking. Hard gates are unaffected.
+weights:
+  foot_skate: 3.0
+  foot_skate_severe: 3.0
+  walk_pause: 3.0          # pausing / walk-in-standing
+  walk_torso_bend: 3.0     # bending down during walking
+  walk_leg_angle: 3.0      # leg swings too high during walking
+  stance_width: 3.0        # leg too wide
+  self_collision: 3.0      # leg / self collision
+  feet_close: 3.0          # feet collision
+  small_hop: 3.0           # hops
+  flight_phase: 3.0        # hops (both feet airborne)
+  sudden_jump: 3.0         # hops (ballistic)

@@ -1,0 +1,36 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Python
+.DS_Store
+**/*.egg-info/
+**/__pycache__/
+**/.pytest_cache/
+**/*.pyc
+**/*.pb
+
+# Large files
+# Colored G1 USD variants for data-gen rendering (staged locally, ~271 MB)
+assets/robots/g1_29dof_variants/
+**/__pycache__/
+
+# Outputs
+**/outputs/*
+**/eval_sim*/
+eval_closedloop_sim_multi_output/
+/*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]/
+
+# tmp
+**/tmp/*
+
+# Env
+**/*.env
+**/kimodo-models*/
+
+# vscode
+.vscode/
+
+# MuJoCo error log (written to the working directory)
+**/MUJOCO_LOG.TXT

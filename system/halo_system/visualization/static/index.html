@@ -1,0 +1,500 @@
+<!doctype html>
+<!--
+  For licensing see accompanying LICENSE file.
+  Copyright (C) 2026 Apple Inc. All Rights Reserved.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Halo viewer</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<style>
+  :root{
+  /* Panel widths (runtime-adjustable via the resizers). */
+    --lw:400px; --rw:340px;
+    --bg:#08090c;
+    --chrome:rgba(20,21,25,.72); --card:rgba(38,40,46,.55); --card2:rgba(46,48,55,.42);
+    /* Floating-overlay glass (LIVE only). */
+    --panel-glass:rgba(14,16,20,.50);
+    --hair:rgba(255,255,255,.08); --hair2:rgba(255,255,255,.14);
+    --txt:#f7f8fa; --txt2:#e2e4ea; --txt3:#aeb4bf; --blue:#3b9dff; --blue-soft:rgba(59,157,255,.18);
+    /* Color-blind-safe status palette (Okabe-Ito); status always has a text label too. */
+    --red:#e8552d; --green:#1fb488; --amber:#f2a20c;
+    font-synthesis:none; -webkit-font-smoothing:antialiased;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{color:var(--txt); overflow:hidden; display:flex; flex-direction:column;
+    font-family:-apple-system,"SF Pro Display","SF Pro Text",system-ui,sans-serif; font-size:13.5px; letter-spacing:-0.01em;}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums; letter-spacing:0;}
+  .eyebrow{font-size:10.5px; font-weight:640; letter-spacing:.07em; text-transform:uppercase; color:var(--txt3);}
+  button{font:inherit;}
+  ::selection{background:var(--blue-soft);}
+
+  .sec{background:var(--card2); border:.5px solid var(--hair); border-radius:12px;
+    padding:10px 11px 11px; margin-top:8px; box-shadow:0 1px 0 rgba(255,255,255,.03) inset;}
+  .sec:first-child{margin-top:2px;}
+  .sec > .eyebrow{display:block; margin:0 0 7px; padding-bottom:6px; border-bottom:.5px solid var(--hair);}
+
+  .titlebar{height:54px; flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:0 18px;
+    background:var(--chrome); backdrop-filter:blur(34px) saturate(180%); -webkit-backdrop-filter:blur(34px) saturate(180%);
+    border-bottom:.5px solid var(--hair); z-index:10;}
+  .logo{display:flex; align-items:center; gap:9px;}
+  .logo svg{filter:drop-shadow(0 0 7px rgba(10,132,255,.4));}
+  .logo-name{font-size:16px; font-weight:600; letter-spacing:-.02em; color:var(--txt);} .logo-name b{font-weight:760;}
+  .spacer{flex:1;}
+  .pill{display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 12px; background:rgba(118,118,128,.16); border-radius:9px; font-size:13px;}
+  .pill .plabel{color:var(--txt3);}
+
+  .stage{flex:1; min-height:0; display:grid; grid-template-columns:var(--lw,520px) 1fr var(--rw,340px); position:relative;}
+  .col{position:relative; min-width:0; min-height:0; display:flex; flex-direction:column; overflow:hidden;
+    background:var(--chrome); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%);}
+  .col.left{border-right:.5px solid var(--hair);} .col.right{border-left:.5px solid var(--hair);}
+
+  #obsimg{max-width:100%; max-height:100%; border-radius:10px; border:.5px solid var(--hair); box-shadow:0 8px 26px rgba(0,0,0,.5); background:#0a0b0d;}
+  #obsempty{color:var(--txt3); font-size:12.5px; text-align:center; line-height:1.5;}
+  /* Ego panel: draggable PiP (makeEgoDraggable in app.js). */
+  .egofloat{flex:0 0 auto;}
+  .egofloat #obswrap{flex:0 0 auto; max-height:240px; min-height:0; padding:4px 10px 8px; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+  .egofloat #obswrap #obsimg{width:100%; height:auto; max-height:240px; object-fit:contain;}
+  body.imm .egofloat{position:fixed; top:64px; right:calc(var(--rw,340px) + 16px); width:var(--egow,360px); z-index:8;
+    background:var(--panel-glass); border:.5px solid var(--hair); border-radius:12px; overflow:hidden;
+    box-shadow:0 10px 34px rgba(0,0,0,.4); cursor:move;}
+
+  /* LIVE immersive layout: 3D fills the area; panels float on top. */
+  body.imm .stage{position:absolute; top:54px; left:0; right:0; bottom:0; display:block; z-index:0;}
+  /* 3D column fills only the gap between the side panels so the robot centres in the visible area. */
+  body.imm .viewcol{position:absolute; top:0; bottom:0; left:var(--lw,520px); right:var(--rw,340px); z-index:0;}
+  body.imm .col.left{position:absolute; top:0; left:0; bottom:0; width:var(--lw,520px); z-index:5; background:var(--panel-glass); backdrop-filter:none; -webkit-backdrop-filter:none;}
+  /* Right panel: full height settings panel. */
+  body.imm .col.right{position:absolute; top:0; right:0; bottom:0; width:var(--rw,340px); z-index:7; background:var(--panel-glass); backdrop-filter:none; -webkit-backdrop-filter:none;}
+  #viewport{position:absolute; inset:0;} #viewport canvas{display:block;}
+  .modebadge{position:absolute; top:14px; left:14px; z-index:4; display:inline-flex; align-items:center; gap:8px; height:30px; padding:0 13px;
+    border-radius:9px; font-size:13px; font-weight:600; color:#fff; background:var(--chrome); border:.5px solid var(--hair);
+    backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%);}
+  .modebadge .dot{width:9px; height:9px; border-radius:50%; background:var(--green);}
+  .loading{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:#fff; font-size:13px; z-index:6;}
+  .spinner{width:28px; height:28px; border-radius:50%; border:3px solid rgba(255,255,255,.25); border-top-color:#fff; animation:spin .9s linear infinite;} @keyframes spin{to{transform:rotate(360deg);}}
+  .hud{display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 12px; border-radius:9px; cursor:pointer; color:var(--txt);
+    background:var(--chrome); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%);
+    border:.5px solid var(--hair); box-shadow:0 6px 20px rgba(0,0,0,.4); transition:background .15s,color .15s; font-size:13px;}
+  .hud:hover{background:rgba(118,118,128,.34);} .hud.on{background:var(--blue); color:#fff;}
+  .hud .sw{width:11px; height:11px; border-radius:3px; flex:0 0 auto;}
+
+  .ops{flex:1; min-height:0; overflow-y:auto; padding:2px 14px 18px;}
+  .ops::-webkit-scrollbar{width:8px;} .ops::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14); border-radius:4px;}
+  .btnrow{display:flex; gap:6px; margin:0;}
+  .b{flex:1; height:30px; border:.5px solid var(--hair); border-radius:8px; background:rgba(118,118,128,.18); color:var(--txt); font-weight:560; font-size:12.5px; cursor:pointer; transition:background .13s, border-color .13s;}
+  .b:hover{background:rgba(118,118,128,.34); border-color:var(--hair2);} .b:active{background:rgba(118,118,128,.42);}
+  .slider{display:flex; align-items:center; gap:10px; margin:7px 0 2px;}
+  .slider label{width:96px; color:var(--txt3); font-size:11.5px; font-weight:560;}
+  .slider input[type=range]{flex:1; -webkit-appearance:none; height:4px; border-radius:3px; background:rgba(255,255,255,.14);}
+  .slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.5); cursor:pointer;}
+  .slider .val{width:56px; text-align:right; color:var(--txt); font-size:12.5px;}
+  .toggle{display:flex; align-items:center; gap:9px; padding:5px 0; font-size:12.5px; cursor:pointer;}
+  .toggle .box{width:34px; height:20px; border-radius:11px; background:rgba(118,118,128,.4); position:relative; transition:background .15s; flex:0 0 auto;}
+  .toggle .box::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:transform .15s;}
+  .toggle.on .box{background:var(--blue);} .toggle.on .box::after{transform:translateX(14px);}
+
+  .rz{position:absolute; z-index:8; top:0; bottom:0; width:8px; cursor:ew-resize;} .rz:hover{background:rgba(10,132,255,.35);}
+  .rz::before{content:""; position:absolute; left:3px; top:50%; transform:translateY(-50%); width:2px; height:34px; border-radius:2px; background:rgba(255,255,255,.28);}
+
+  /* Foldable panels collapse to a strip (keeps the chevron clickable); width uses the same --rw as the drag handle. */
+  .foldbtn{position:absolute; z-index:12; appearance:none; border:0; cursor:pointer; padding:0;
+    width:22px; height:22px; border-radius:6px; background:rgba(118,118,128,.22);
+    color:var(--txt2); font-size:11px; line-height:22px; text-align:center;
+    transition:background .13s, color .13s;}
+  .foldbtn:hover{background:rgba(118,118,128,.45); color:#fff;}
+  .col.right .foldbtn{top:10px; left:3px;}
+  /* Folded: only the chevron; the resize handle is hidden too. */
+  .col.right.folded > *:not(.foldbtn){display:none;}
+  #toast{pointer-events:none; position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--card); border:.5px solid var(--hair); border-radius:9px; padding:8px 14px; font-size:12px; color:var(--txt); backdrop-filter:blur(20px); opacity:0; transition:opacity .2s; z-index:40;}
+  .btnrow.cam{flex-wrap:wrap;} .btnrow.cam .b{flex:1 1 calc(50% - 4px); min-width:0; height:30px; padding:0 8px;}
+
+  /* mission orchestrator (left column) */
+  .mission{flex:1; min-height:0; display:flex; flex-direction:column; gap:9px; padding:11px 13px 8px; border-top:.5px solid var(--hair);}
+  .mission-head{display:flex; align-items:center; gap:8px;} .mission-head .eyebrow{flex:1;}
+  .head-badges{flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px;}
+  /* live "thinking" box (ephemeral per-tick reasoning) */
+  .thinking{flex:0 0 auto; display:flex; align-items:flex-start; gap:7px; padding:7px 10px; margin-top:4px; border-radius:9px;
+    background:rgba(255,255,255,.03); border:.5px solid var(--hair); color:var(--txt3); font-size:11.5px; font-style:italic; transition:opacity .28s ease;}
+  .thinking .td{width:5px; height:5px; border-radius:50%; background:var(--blue); animation:tdp .72s ease-in-out infinite; margin-top:4px; flex:0 0 auto;}
+  .thinking .td:nth-child(2){animation-delay:.12s;} .thinking .td:nth-child(3){animation-delay:.24s;}
+  @keyframes tdp{0%,80%,100%{opacity:.25; transform:scale(.8);}40%{opacity:1; transform:scale(1);}}
+  .thinking .lt-txt{line-height:1.42; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; transition:opacity .3s ease;}
+  .thinking.hold{color:var(--amber); border-color:rgba(255,159,10,.4);} .thinking.hold .td{background:var(--amber); animation:none; opacity:.9;}
+  /* per-decision pulse so a re-think is visible even when the text repeats */
+  .thinking.tick{animation:thinkTick .38s ease-out;}
+  @keyframes thinkTick{0%{border-color:var(--blue); box-shadow:0 0 0 0 rgba(10,132,255,.32); background:rgba(10,132,255,.10);}
+    100%{border-color:var(--hair); box-shadow:0 0 0 6px rgba(10,132,255,0); background:rgba(255,255,255,.03);}}
+  /* Liveness badge, driven by the inline script at the bottom of this file. */
+  .stale-badge{flex:0 0 auto; display:inline-flex; align-items:center; gap:4px; font-size:10.5px;
+    color:var(--txt3); padding:2px 7px; border-radius:20px; border:.5px solid var(--hair2);
+    background:rgba(255,255,255,.04);}
+  .stale-badge .dot{width:6px; height:6px; border-radius:50%; background:var(--txt3); flex:0 0 auto;}
+  .stale-badge.ok{color:var(--green); border-color:rgba(48,209,88,.35);} .stale-badge.ok .dot{background:var(--green);}
+  .stale-badge.stale{color:var(--amber); border-color:rgba(255,159,10,.4);} .stale-badge.stale .dot{background:var(--amber); animation:tdp 1.1s ease-in-out infinite;}
+  .stale-badge.dead{color:var(--red); border-color:rgba(255,69,58,.4);} .stale-badge.dead .dot{background:var(--red);}
+  /* Mission plan checklist: always framed; shows "planning…" while empty (zero-step plans are normal). */
+  .planbox{align-self:stretch; margin:6px 0; padding:9px 11px 10px; border-radius:11px;
+    background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.022));
+    border:.5px solid var(--hair); box-shadow:0 1px 3px rgba(0,0,0,.18);}
+  .planbox.finished{border-color:rgba(48,209,88,.32); background:rgba(48,209,88,.055);}
+  .plan-head{display:flex; align-items:baseline; justify-content:space-between; gap:8px;}
+  .plan-title{font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--txt3);}
+  .planbox.finished .plan-title{color:var(--green);}
+  .plan-prog{color:var(--txt3); font-size:10.5px; font-variant-numeric:tabular-nums;}
+  .planbox.finished .plan-prog{color:var(--green);}
+  .plan-bar{height:2px; border-radius:2px; background:rgba(255,255,255,.09); margin:7px 0 8px;
+    overflow:hidden;}
+  .plan-bar i{display:block; height:100%; width:0; background:var(--blue);
+    transition:width .45s cubic-bezier(.4,0,.2,1);}
+  .planbox.finished .plan-bar i{background:var(--green);}
+  .plan-steps{display:flex; flex-direction:column; gap:1px;}
+  .pstep{display:flex; align-items:baseline; gap:8px; padding:4px 7px; border-radius:7px;
+    font-size:12.5px; color:var(--txt2); transition:background .18s;}
+  .pstep .pmark{flex:0 0 auto; width:13px; text-align:center; font-size:11.5px;}
+  .pstep .pnum{flex:0 0 auto; font-size:9.5px; opacity:.4; min-width:9px;}
+  .pstep .ptitle{flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis;
+    white-space:nowrap;}
+  .pstep .psk{flex:0 0 auto; font-size:9.5px; opacity:.32;}
+  .pstep.pending{opacity:.6;} .pstep.pending .pmark{color:var(--txt3);}
+  .pstep.completed{color:var(--txt3);} .pstep.completed .ptitle{text-decoration:line-through; opacity:.7;}
+  .pstep.completed .pmark{color:var(--green,#30d158);}
+  .pstep.failed .pmark{color:var(--red,#ff453a);}
+  .pstep.skipped{color:var(--txt3);} .pstep.skipped .ptitle{text-decoration:line-through; opacity:.6;}
+  .pstep.skipped .pmark{color:var(--amber,#ff9f0a);}
+  /* operator STOP: the running step reads as cancelled. */
+  .pstep.cancelled{color:var(--txt3);} .pstep.cancelled .ptitle{text-decoration:line-through; opacity:.7;}
+  .pstep.cancelled .pmark{color:var(--amber,#ff9f0a);}
+  .planbox.stopped{border-color:rgba(255,159,10,.42); background:rgba(255,159,10,.05);}
+  .planbox.stopped .plan-title, .planbox.stopped .plan-prog{color:var(--amber,#ff9f0a);}
+  .pstep.in_progress{background:rgba(10,132,255,.15); color:var(--txt); font-weight:560;}
+  .pstep.in_progress .pmark{color:var(--blue);}
+  .pstep.in_progress .pmark i, .pstep.waiting .pmark i{display:inline-block; width:7px; height:7px;
+    border:1.5px solid var(--blue); border-top-color:transparent; border-radius:50%;
+    animation:pspin .7s linear infinite;}
+  .pstep.waiting{color:var(--txt3); font-style:italic;}
+  .pstep.waiting .pmark i{border-color:var(--txt3); border-top-color:transparent;}
+  @keyframes pspin{to{transform:rotate(360deg);}}
+  .msgs{flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:5px; padding:3px 2px 4px;}
+  .msgs::-webkit-scrollbar{width:8px;} .msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14); border-radius:4px;}
+  .msgs .empty{color:var(--txt3); font-size:12px; text-align:center; margin:auto; line-height:1.65; padding:14px;}
+  @keyframes flowin{from{opacity:0; transform:translateY(12px) scale(.97);}to{opacity:1; transform:none;}}
+  .mission-input{display:flex; align-items:center; gap:8px; flex:0 0 auto; padding:9px 11px; margin-top:2px; position:relative;
+    background:rgba(255,255,255,.045); border-left:2px solid #b7a9ff; border-radius:4px;}
+  .mission-input input{flex:1; height:20px; background:transparent; border:none; color:var(--txt);
+    font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:12.5px; padding:0;}
+  .mission-input input:focus{outline:0;} .mission-input input::placeholder{color:var(--txt3);}
+
+  .msgs.term{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:12px; line-height:1.55; gap:16px; padding:8px 2px;}
+  .turn{animation:flowin .3s cubic-bezier(.2,.85,.25,1); padding:2px 0;}
+  .turn.agent + .turn.agent, .turn.user + .turn, .turn + .turn.user{border-top:.5px solid var(--hair); padding-top:14px;}
+  .turn.user{align-self:stretch; max-width:100%;}
+  .turn.user .ubox{background:rgba(183,169,255,.08); border-left:2px solid #b7a9ff; border-radius:4px;
+    padding:9px 12px; color:var(--txt); white-space:pre-wrap; word-break:break-word;}
+  /* agent turn: always blue; the task colour shows in the [subtask] tag */
+  /* Turns are inset while the plan checklist runs full width. */
+  .turn.agent{align-self:stretch; max-width:100%; margin-left:12px; border-left:2px solid var(--blue); padding-left:11px;}
+  /* One line per turn: [task]: reply …   counters pinned right. */
+  .turn .tline{display:flex; align-items:baseline; gap:6px; min-width:0; line-height:1.5;}
+  .turn .tline .tl-task{flex:0 0 auto; font-weight:700; color:var(--st,var(--blue));
+    font-size:12.5px; letter-spacing:-.01em;}
+  .turn .tline .tl-task::after{content:":"; color:var(--txt3); font-weight:500;}
+  /* reply: one line, ellipsised; full text when focused */
+  .turn .tline .tl-say{flex:1 1 auto; min-width:0; color:var(--txt2);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .turn.agent:hover .tline{flex-wrap:wrap;}
+  /* reply bubbles always show full text */
+  .turn.reply .tline{flex-wrap:wrap;}
+  .turn.reply .tl-say{white-space:normal; overflow:visible; text-overflow:clip;}
+  .turn.agent:hover .tline .tl-say{white-space:normal; overflow:visible; word-break:break-word;}
+  /* Step-decision line (the orchestrator's per-decision `say`): only the newest of a run is shown. */
+  .turn.agent.say{border-left:0; margin-left:12px; padding-left:2px;
+    animation:sayIn .42s cubic-bezier(.2,.85,.25,1) both;}
+  .turn.agent + .turn.agent.say, .turn.agent.say + .turn.agent{border-top:0; padding-top:4px;}
+  .turn.agent.say .tline{font-size:11.5px;}
+  .turn.agent.say .tline::before{content:""; flex:0 0 auto; align-self:center; width:5px; height:5px;
+    margin-right:2px; border-radius:50%; background:var(--blue); opacity:.85;}
+  .turn.agent.say .tline .tl-task{font-size:11.5px; font-weight:600; color:var(--txt3);}
+  .turn.agent.say .tline .tl-say{color:var(--txt3); white-space:normal; overflow:visible;}
+  @keyframes sayIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  /* HALO theme: overrides only; layout above unchanged. */
+  :root{
+    --bg:#0a0a0b;
+    --chrome:rgba(10,10,11,.72); --card:rgba(255,255,255,.045); --card2:rgba(255,255,255,.035);
+    --panel-glass:rgba(10,10,11,.62);
+    --hair:rgba(255,255,255,.10); --hair2:rgba(255,255,255,.20);
+    --txt:#f5f5f7; --txt2:rgba(245,245,247,.80); --txt3:rgba(245,245,247,.56);
+    --blue:#2997ff; --blue-soft:rgba(41,151,255,.18);
+    --red:#ff453a; --green:#30d158; --amber:#ffb340;
+  }
+  body{background:var(--bg);}
+  .viewcol{background:#0a0a0b;}
+  .loading{background:#0a0a0b;}
+  .sec{border-radius:20px; border:1px solid var(--hair); background:var(--card2);}
+  /* buttons are pills; the selected state is white with ink text */
+  .b{border-radius:999px; border:1px solid var(--hair); background:rgba(255,255,255,.07); font-weight:500;}
+  .b:hover{background:rgba(255,255,255,.12);}
+  .b.on{background:#f5f5f7; color:#1d1d1f;}
+  .modebadge{border-radius:999px; height:34px; padding:0 15px 0 13px; font-weight:500; font-size:13px;
+    background:rgba(10,10,11,.55); border:1px solid var(--hair);}
+  .modebadge .dot{width:8px; height:8px; background:transparent; box-shadow:inset 0 0 0 1.6px currentColor; color:var(--green);}
+  .hud{border-radius:999px; height:36px; padding:0 15px; background:rgba(10,10,11,.6); border:1px solid var(--hair); box-shadow:none; font-weight:500;}
+  .hud.on{background:#f5f5f7; color:#1d1d1f;}
+  .hud .sw{border-radius:50%;}
+  /* 3D overlay layout: mode badge top-left, control bar bottom-centre. */
+  body.imm .modebadge{top:14px; left:14px; right:auto; bottom:auto; z-index:8;}
+  .vpbar{position:absolute; left:50%; transform:translateX(-50%); bottom:14px; z-index:7;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; max-width:calc(100% - 28px);}
+  .hudseg .hud{height:36px; padding:0 14px; border:0; background:transparent; color:rgba(245,245,247,.6);
+    box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none;}
+  .hudseg .hud:hover{background:transparent; color:#f5f5f7;}
+  .hudseg .hud.on{background:#f5f5f7; color:#1d1d1f;}
+  .vseg{display:inline-flex; padding:3px; border-radius:999px; background:rgba(10,10,11,.6); border:1px solid var(--hair);
+    -webkit-backdrop-filter:saturate(180%) blur(20px); backdrop-filter:saturate(180%) blur(20px);}
+  .vseg button{min-height:36px; padding:0 14px; border:0; border-radius:999px; background:transparent; font-size:13px;
+    font-weight:500; color:rgba(245,245,247,.6); cursor:pointer; transition:background .25s cubic-bezier(.22,.61,.36,1),color .25s;}
+  .vseg button:hover{color:#f5f5f7;}
+  .vseg button[aria-pressed="true"]{background:#f5f5f7; color:#1d1d1f;}
+  input[type=range]{accent-color:#f5f5f7;}
+
+
+  /* Viewer style: chat bubbles, inline task lists. Overrides only. */
+  @keyframes rb-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+  @keyframes rb-rot{to{transform:rotate(360deg)}}
+  #msgs{display:flex; flex-direction:column; gap:8px; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;}
+  #msgs .tl-say, #msgs .ubox, #msgs .ptitle{font-family:inherit;}
+  #msgs .turn{padding:0 !important; margin:0; border:0 !important; background:none; animation:rb-in .42s cubic-bezier(.16,1,.3,1) both;}
+  #msgs .turn.user{align-self:flex-end; max-width:86%;}
+  #msgs .turn.user .ubox{padding:8px 13px; border:0; border-radius:18px 18px 6px 18px; background:#f5f5f7; color:#1d1d1f;
+    font-weight:500; font-size:15.6px; line-height:1.42; letter-spacing:-.005em;}
+  #msgs .turn.agent{align-self:flex-start; max-width:100%; margin-left:0; padding-left:4px !important;}
+  #msgs .turn.agent .tline{display:flex; align-items:baseline; gap:9px; font-size:13.8px; line-height:1.4; color:rgba(245,245,247,.5);}
+  #msgs .turn.agent .tline::before{content:""; flex:none; width:5px; height:5px; border-radius:50%; background:#4fd1c5; opacity:.85; transform:translateY(-1px);}
+  #msgs .turn.agent .tl-task{display:none;}
+  #msgs .turn.agent .tl-say{white-space:normal; overflow:visible; text-overflow:clip; color:inherit;}
+  #msgs .turn.agent.reply{max-width:86%; padding:9px 13px !important; border-radius:18px 18px 18px 6px; background:rgba(255,255,255,.1);}
+  #msgs .turn.agent.reply .tline{font-size:15.6px; line-height:1.42; color:#f5f5f7;}
+  #msgs .turn.agent.reply .tline::before{display:none;}
+  #msgs .planbox{align-self:stretch; margin:0; padding:10px 12px; border-radius:14px; background:#1c1c1f; border:1px solid rgba(255,255,255,.08);
+    animation:rb-in .42s cubic-bezier(.16,1,.3,1) both;}
+  #msgs .planbox.finished, #msgs .planbox.stopped{background:#1c1c1f; border-color:rgba(255,255,255,.08);}
+  #msgs .planbox .plan-head, #msgs .planbox .plan-bar{display:none;}
+  #msgs .pstep{display:flex; align-items:center; gap:10px; padding:3px 0; border-radius:0; background:none !important;
+    font-size:15px; font-weight:400; line-height:1.3; color:rgba(245,245,247,.74); opacity:1; font-style:normal;}
+  #msgs .pstep .pnum, #msgs .pstep .psk{display:none;}
+  #msgs .pstep .pmark{flex:none; width:14px; height:14px; border-radius:50%; box-sizing:border-box; border:1.5px solid rgba(245,245,247,.28); font-size:0; color:transparent;}
+  #msgs .pstep .pmark i{display:none;}
+  #msgs .pstep .ptitle{text-decoration:none; opacity:1;}
+  #msgs .pstep.in_progress{color:#f5f5f7;}
+  #msgs .pstep.in_progress .pmark, #msgs .pstep.waiting .pmark{border-color:#4fd1c5; border-right-color:transparent; animation:rb-rot 1s linear infinite;}
+  #msgs .pstep.completed{color:rgba(245,245,247,.5);}
+  #msgs .pstep.completed .pmark{border:0; background:#30d158 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.2 6.2l1.8 1.8 3.8-4' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;}
+  #msgs .pstep.cancelled, #msgs .pstep.skipped{color:rgba(245,245,247,.28);}
+  #msgs .pstep.cancelled .ptitle, #msgs .pstep.skipped .ptitle{text-decoration:line-through;}
+  #msgs .pstep.failed .pmark{border-color:#ff453a;}
+  .mission-head{flex-wrap:wrap; row-gap:6px;} .mission-head .eyebrow{flex:0 0 auto;}
+  .head-badges{flex:1 1 auto; min-width:0; flex-direction:row; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:6px;}
+
+  #msgs .turn.agent .tline::before{width:6px; height:6px;}
+  #msgs .pstep{gap:11px; padding:3px 0;}
+  #msgs .planbox{padding:11px 13px; border-radius:15px;}
+  .thinking{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif; font-style:normal !important;
+    font-size:14px; color:rgba(245,245,247,.6) !important; background:rgba(255,255,255,.06) !important; border:1px solid rgba(255,255,255,.08) !important;
+    border-radius:999px; padding:10px 16px; align-items:center;}
+  .thinking .lt-txt{font-style:normal !important;}
+  .thinking .td, .thinking.hold .td{width:7px; height:7px; margin-top:0; background:#4fd1c5 !important; opacity:1; animation:tdp .9s ease-in-out infinite !important;}
+  .thinking .td:nth-child(2){animation-delay:.15s !important;} .thinking .td:nth-child(3){animation-delay:.3s !important;}
+  .mission-input{border:1px solid rgba(255,255,255,.08) !important; border-left:1px solid rgba(255,255,255,.08) !important; border-radius:999px !important;
+    background:rgba(255,255,255,.06) !important; box-shadow:none !important; padding:10px 10px 10px 18px;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif; font-size:14px;}
+  .mission-input input{font-family:inherit !important; font-size:14px !important; color:rgba(245,245,247,.6);}
+  .col.right, .col.right *{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;}
+  .col.right .mono, .col.right .val{font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+  .col.right .sec{background:rgba(14,14,16,.6); border:1px solid rgba(255,255,255,.08); border-radius:20px;}
+  .col.right .eyebrow{letter-spacing:.06em; color:rgba(245,245,247,.5);}
+  .toggle{font-size:13.5px; color:rgba(245,245,247,.8);}
+  .toggle .box{background:rgba(255,255,255,.14);}
+  .toggle.on .box{background:#f5f5f7;} .toggle.on .box::after{background:#1d1d1f;}
+  .col.right .b{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:rgba(245,245,247,.85);}
+  .col.right .b:hover{background:rgba(255,255,255,.1);}
+  .col.right .b.on{background:#f5f5f7; color:#1d1d1f;}
+  .col.right input[type=range]{accent-color:#f5f5f7;}
+  #egofloat{padding:0 !important; overflow:hidden; border-radius:16px;}
+  #egofloat #obswrap{margin:0 !important; position:relative; flex-direction:column; align-items:stretch;
+    padding:0 !important; max-height:none !important;}
+  #egofloat #obsimg{display:block; width:100%; border-radius:16px;}
+  #egofloat .egolabel{display:block; padding:8px 14px 7px; pointer-events:none; font-size:14px; font-weight:600;
+    letter-spacing:.02em; color:rgba(245,245,247,.78);}
+  #egofloat #obswrap #obsimg{object-fit:cover; border:0; box-shadow:none; border-radius:0 0 16px 16px;}
+  #egofloat #obsempty{padding:18px 10px 22px;}
+  /* Adaptive ego window: full size (360 px wide, <=240 px image) on large screens, shrinks with the viewport otherwise. */
+  body.imm .egofloat{width:clamp(200px, 26vw, var(--egow,360px));}
+  #egofloat #obswrap #obsimg {max-height:min(240px, 24vh);}
+  /* stop the browser's native image drag so the drag reaches makeEgoDraggable */
+  #egofloat img{-webkit-user-drag:none; user-select:none; -webkit-user-select:none;
+    pointer-events:none;}
+  #egofloat{touch-action:none; user-select:none; -webkit-user-select:none;}
+  @media (max-width:900px), (max-height:640px){
+    #egofloat .egolabel{font-size:12px; padding:5px 10px 4px;}
+  }
+  body .mission-head > .eyebrow{font-size:15px; letter-spacing:.08em; color:rgba(245,245,247,.72);}
+  #msgs #msgsEmpty{font-size:15.5px; line-height:1.5; color:rgba(245,245,247,.72);}
+
+  /* ego window folds up to its title strip; no image is fetched while folded */
+  .winfold{position:absolute; top:4px; right:6px; z-index:3; width:30px; height:26px; padding:0; border:0; border-radius:8px;
+    background:rgba(0,0,0,.35); color:var(--txt2); font-size:13px; line-height:1; cursor:pointer;}
+  .winfold:hover{background:rgba(255,255,255,.14); color:#fff;}
+  #egofloat.wfolded #obsimg, #egofloat.wfolded #obsempty{display:none !important;}
+  .egofloat.wfolded .egolabel{padding-right:52px;}
+  body.imm .depthfloat{top:380px;}   /* until placeDepth() runs */
+  #depthfloat{padding:0 !important; overflow:hidden; border-radius:16px;}
+  #depthfloat #depthwrap{flex:0 0 auto; min-height:0; padding:0; margin:0; overflow:hidden;
+    display:flex; position:relative; flex-direction:column; align-items:stretch; justify-content:center;}
+  #depthfloat .egolabel{display:block; padding:8px 14px 7px; pointer-events:none; font-size:14px; font-weight:600;
+    letter-spacing:.02em; color:rgba(245,245,247,.78);}
+  #depthfloat #depthimg{display:block; width:100%; height:auto; max-height:min(240px, 24vh); object-fit:cover; border:0;
+    box-shadow:none; border-radius:0 0 16px 16px; image-rendering:pixelated;}
+  #depthfloat #depthempty{color:var(--txt3); font-size:12.5px; text-align:center; line-height:1.5; padding:18px 10px 22px;}
+  #depthfloat.wfolded #depthimg, #depthfloat.wfolded #depthempty{display:none !important;}
+</style>
+</head>
+<body>
+  <div class="titlebar">
+    <div class="logo" title="Halo viewer">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="10.2" stroke="url(#pg)" stroke-width="1.7"/>
+        <path d="M12 3.2 V20.8" stroke="url(#pg)" stroke-width="1.7" stroke-linecap="round"/>
+        <ellipse cx="12" cy="12" rx="5.2" ry="8.4" stroke="url(#pg)" stroke-width="1.7"/>
+        <defs><linearGradient id="pg" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#0a84ff"/><stop offset="1" stop-color="#64d2ff"/></linearGradient></defs>
+      </svg>
+      <span class="logo-name">Halo <b>viewer</b></span>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill mono" title="live stream status"><span class="plabel">source</span> <span id="srclabel">loading…</span></div>
+  </div>
+
+  <div class="stage">
+    <!-- LEFT: ego observation + mission orchestrator stream -->
+    <div class="col left">
+      <!-- Ego observation: floating PiP (.egofloat). -->
+      <div class="egofloat" id="egofloat">
+        <button class="winfold" id="egoFold" title="fold the ego camera" aria-label="fold the ego camera">▴</button>
+        <div id="obswrap"><span class="egolabel">Ego camera</span><img id="obsimg" style="display:none"><div id="obsempty">No image</div></div>
+      </div>
+      <!-- Depth camera: its own floating window, placed under the ego window until dragged.
+           Shown only when the tracker publishes g1/depth (depth policies). -->
+      <div class="egofloat depthfloat" id="depthfloat" style="display:none">
+        <button class="winfold" id="depthFold" title="fold the depth camera" aria-label="fold the depth camera">▴</button>
+        <div id="depthwrap" title="near = red, far = blue (0.2–2.5 m)"><span class="egolabel">Depth camera</span><img id="depthimg" style="display:none"><div id="depthempty">Connecting…</div></div>
+      </div>
+      <div class="mission">
+        <div class="mission-head"><span class="eyebrow">Chat</span><span class="head-badges"><span class="stale-badge" id="staleBadge" title="orchestrator heartbeat liveness"><i class="dot"></i><span id="staleBadgeTxt">—</span></span></span></div>
+        <div class="msgs term" id="msgs"><div class="empty" id="msgsEmpty">Connecting…</div></div>
+        <div class="thinking" id="liveThink" style="display:none"><span class="td"></span><span class="td"></span><span class="td"></span><span class="lt-txt" id="liveThinkText">thinking…</span></div>
+        <div class="mission-input">
+            <input id="humanMsg" placeholder="Message the robot…   ↵ to send" maxlength="240" autocomplete="off">
+        </div>
+      </div>
+      <div class="rz" id="rz-l" style="right:-4px"></div>
+    </div>
+
+    <!-- CENTER: 3D -->
+    <div class="col viewcol">
+      <div id="viewport"></div>
+      <div class="loading" id="loading"><div class="spinner"></div><div>Preparing scene…</div></div>
+      <div class="modebadge"><span class="dot"></span><span id="modeBadgeT">LIVE</span></div>
+      <!-- Control bar: drawn robots | camera view | zoom. -->
+      <div class="vpbar">
+        <div class="vseg hudseg" role="group" aria-label="robots shown">
+          <button class="hud on" id="actualToggle"><span class="sw" style="background:linear-gradient(135deg,#3a3a3c,#cfcfd4)"></span>actual</button>
+          <button class="hud on" id="ghostToggle"><span class="sw" style="background:#6a8dff"></span>reference</button>
+          <button class="hud" id="overlayToggle"><span class="sw" style="background:#ff9f0a"></span>plan</button>
+          <button class="hud" id="followToggle" title="camera rides behind the robot as it turns (drag to change the angle)">follow</button>
+        </div>
+        <div class="vseg" id="viewSeg" role="group" aria-label="camera view">
+          <button data-v="34" aria-pressed="true">3/4</button><button data-v="front" aria-pressed="false">Front</button><button data-v="side" aria-pressed="false">Side</button><button data-v="top" aria-pressed="false">Top</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: visualize settings -->
+    <div class="col right">
+      <button class="foldbtn" id="foldR" title="collapse the panel (it stays reachable as a strip)">›</button>
+      <div class="rz" id="rz-r" style="left:-4px"></div>
+
+      <div class="ops">
+        <div class="sec">
+          <span class="eyebrow">Robots</span>
+          <div class="toggle on" id="tg-actual"><span class="box"></span><span>Actual robot (original)</span></div>
+          <div class="toggle on" id="tg-ghost"><span class="box"></span><span>Reference ghost (blue)</span></div>
+          <div class="toggle" id="tg-overlay"><span class="box"></span><span>Plan overlay (yellow)</span></div>
+          <div class="slider"><label>ghost opacity</label><input type="range" id="ghostOp" min="0.1" max="1" step="0.05" value="0.5"><span class="val mono" id="ghostOpV">0.50</span></div>
+          <div class="slider"><label>plan opacity</label><input type="range" id="ovOp" min="0.1" max="1" step="0.05" value="0.55"><span class="val mono" id="ovOpV">0.55</span></div>
+        </div>
+        <div class="sec">
+          <span class="eyebrow">Scene &amp; assets</span>
+          <div class="toggle" id="tg-scene"><span class="box"></span><span>Scene mesh</span></div>
+          <div class="toggle on" id="tg-grid"><span class="box"></span><span>Ground grid</span></div>
+        </div>
+        <div class="sec">
+          <span class="eyebrow">Camera &amp; coordinates</span>
+          <div class="toggle" id="tg-follow"><span class="box"></span><span>Follow camera</span></div>
+          <div class="toggle" id="tg-axes"><span class="box"></span><span>World axes (X red / Y green / Z blue)</span></div>
+          <div class="toggle" id="tg-robotaxes"><span class="box"></span><span>Robot pelvis axes</span></div>
+          <div class="btnrow cam" style="margin-top:8px">
+            <button class="b" id="camReset">Reset view</button>
+            <button class="b" id="camTop">Top</button>
+            <button class="b" id="btnTwoSided" title="Back-face culling: 1-sided makes the roof invisible from above and solid from inside. Switch to 2-sided if the scan shows holes.">1-sided</button>
+            <button class="b" id="camFront">Front</button>
+            <button class="b" id="camSide">Side</button>
+          </div>
+        </div>
+        <div class="sec">
+          <span class="eyebrow">Controls</span>
+          <div style="color:var(--txt3);font-size:12px;line-height:1.7">
+            <div><b style="color:var(--txt2)">WASD</b> move camera · <b style="color:var(--txt2)">arrows</b> orbit · <b style="color:var(--txt2)">scroll</b> zoom · drag = orbit, right-drag = pan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script type="importmap">
+  { "imports": {
+    "three": "/vendor/three.module.js",
+    "three/addons/": "/vendor/jsm/",
+    "three/examples/jsm/": "/vendor/jsm/",
+    "urdf-loader": "/vendor/urdf-loader/URDFLoader.js"
+  }}
+  </script>
+  <script type="module" src="/app.js"></script>
+  <script>
+  // Orchestrator liveness badge (display only): ok = heartbeat within the liveness window, stale = past it, dead = none or very old.
+  (function () {
+    const el = document.getElementById("staleBadge"), txt = document.getElementById("staleBadgeTxt");
+    if (!el || !txt) return;
+    function paint(connected, ageS) {
+      el.classList.remove("ok", "stale", "dead");
+      if (ageS == null) { el.classList.add("dead"); txt.textContent = "no heartbeat"; return; }
+      if (connected) { el.classList.add("ok"); txt.textContent = `live · ${ageS.toFixed(1)}s`; return; }
+      // 2x the liveness window.
+      el.classList.add(ageS < 120 ? "stale" : "dead");
+      txt.textContent = `stale · ${ageS.toFixed(0)}s`;
+    }
+    function poll() {
+      fetch("/api/live_mission").then((r) => r.json()).then((snap) => {
+        paint(!!snap.connected, snap.heartbeat_age_s != null ? +snap.heartbeat_age_s : null);
+      }).catch(() => paint(false, null)).finally(() => setTimeout(poll, 1000));
+    }
+    poll();
+  })();
+  </script>
+</body>
+</html>

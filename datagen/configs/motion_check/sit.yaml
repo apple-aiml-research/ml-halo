@@ -1,0 +1,71 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Motion-quality-checker overrides for the sit-on-chair task.
+# Overlays default.yaml (which overlays the code defaults).
+#
+# A sit-down does things a walk does not: the pelvis drops onto a seat and the
+# feet can leave the floor or shift as weight moves to the chair. Several hard
+# checks tuned for locomotion (foot_sink, foot_float, sudden_jump) would fire on
+# that transition, so they are relaxed here. The outcome (the robot ends seated
+# and settled) is gated by the sit task-success checks: sits_at_end (hard) and
+# seat_contact (soft, needs a chair in the scene).
+
+# --- foot: the seat, not the floor, bears weight at the end ---
+# Feet can lift as the robot settles onto the chair, so float is tolerated;
+# gross sinking through the floor during the walk-in is still caught.
+foot_float_tol_m: 0.12          # default 0.06; feet may be off the floor when seated
+foot_float_min_run: 10          # default 6; only a longer sustained float is flagged
+foot_sink_tol_m: 0.05           # default 0.03; the walk-in is still gated
+foot_sink_fail_frac: 0.05       # default 0.02
+
+# --- dynamics: a controlled sit-down descent is not a "jump" ---
+# sudden_jump measures a rise-then-fall pop; a monotonic sit-down descent does
+# not trip it. The higher prominence tolerates a small settle bounce.
+dyn_jump_prominence_m: 0.16     # default 0.10
+
+# --- sit task-success band (code defaults shown for reference) ---
+# Collected seat poses put the pelvis at ~0.41-0.45 m, hand-placed ground-truth
+# seats at ~0.53 m. The band covers both pose sources.
+sit_root_z_lo: 0.35
+sit_root_z_hi: 0.62
+sit_settle_frames: 15
+sit_root_z_var_tol: 0.03
+sit_seat_contact_tol_m: 0.08
+
+# --- severity overrides: checks that fire on every sit clip are soft ---
+# As hard gates these would reject every sit clip regardless of quality:
+#   * foot_skate     — Kimodo's walk/turn gait slips at segment seams (~2 m/s seam
+#                      skate).
+#   * self_collision — the seated pose puts a hand near the hip; MuJoCo's convex
+#                      collision hulls over-report compared with the visual mesh,
+#                      which shows a clean sit.
+# As soft checks they lower the score, so accept_min_score still prefers cleaner
+# clips.
+severity_overrides:
+  foot_skate: soft
+  self_collision: soft
+
+# Accept requires no hard failure and score >= this. A clean sit scores ~0.82;
+# a broken one (missed seat, jitter) scores well below. 0.75 keeps good clips and
+# rejects the worst.
+accept_min_score: 0.75
+
+# Score weighting (soft checks only; hard checks gate acceptance regardless).
+# Emphasize the seat outcome + physics realism; down-weight cosmetic foot noise
+# that a sit-down legitimately produces.
+weights:
+  seat_contact: 3.0
+  foot_skate: 1.0
+  foot_float: 0.5
+  jitter: 0.5
+  self_collision: 2.0
+
+# Optional regeneration hints surfaced in judge feedback per failing check.
+hints:
+  sits_at_end: "robot did not end seated/settled — check the SIT segment keyframe (seat pose pinned at the last frame) and that the sit phase is long enough to settle"
+  seat_contact: "pelvis not resting on the chair — adjust the solved AssetPlacement in meta.json"
+  foot_skate: "planted foot slides at a segment seam (turn/step-back/sit) — improve the SE(2) stitch or add a foot anchor at the seam"
+  self_collision: "bent-leg seated pose interpenetrates — re-generate the sit segment or pick a cleaner seat pose"

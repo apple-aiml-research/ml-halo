@@ -1,0 +1,36 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-datagen"
+version = "0.1.0"
+description = "Synthetic data pipeline for the halo motion generator: scenes, motion, placement, render."
+
+[tool.setuptools]
+packages = [
+    "datagen",
+    "datagen.common",
+    "datagen.motion_gen",
+    "datagen.motion_gen.kimodo",
+    "datagen.motion_gen.kimodo.keyframes",
+    "datagen.motion_gen.motion_check",
+    "datagen.motion_gen.motion_check.checks",
+    "datagen.motion_gen.tasks",
+    "datagen.render",
+    "datagen.render.isaac",
+    "datagen.render.mujoco",
+    "datagen.render.synthetic_scene",
+    "datagen.scene_gen",
+    "datagen.scene_gen.scripts",
+    "datagen.scene_gen.spec",
+    "datagen.scene_gen.tools",
+]
+
+[tool.setuptools.package-dir]
+"datagen" = "."

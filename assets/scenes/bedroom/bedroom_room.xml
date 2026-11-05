@@ -1,0 +1,408 @@
+<!-- Room geometry of the bedroom scene (generated room sp02_bedroom_p016, baked + unlit).
+     Visual only: every geom is contype 0. Included by bedroom.xml; asset credits in attribution.json. -->
+<mujoco model="bedroom_room">
+  <asset>
+    <mesh name="m_g000" file="../../../scenes/bedroom/mesh/m_g000.msh"/>
+    <texture name="t_g000" type="2d" file="tex/obj029.png"/>
+    <material name="mat_g000" texture="t_g000" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g001" file="../../../scenes/bedroom/mesh/m_g001.msh"/>
+    <texture name="t_g001" type="2d" file="tex/obj026.png"/>
+    <material name="mat_g001" texture="t_g001" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g002" file="../../../scenes/bedroom/mesh/m_g002.msh"/>
+    <texture name="t_g002" type="2d" file="tex/obj031.png"/>
+    <material name="mat_g002" texture="t_g002" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g003" file="../../../scenes/bedroom/mesh/m_g003.msh"/>
+    <texture name="t_g003" type="2d" file="tex/obj032.png"/>
+    <material name="mat_g003" texture="t_g003" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g004" file="../../../scenes/bedroom/mesh/m_g004.msh"/>
+    <texture name="t_g004" type="2d" file="tex/obj030.png"/>
+    <material name="mat_g004" texture="t_g004" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g005" file="../../../scenes/bedroom/mesh/m_g005.msh"/>
+    <texture name="t_g005" type="2d" file="tex/obj033.png"/>
+    <material name="mat_g005" texture="t_g005" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g006" file="../../../scenes/bedroom/mesh/m_g006.msh"/>
+    <texture name="t_g006" type="2d" file="tex/obj089.png"/>
+    <material name="mat_g006" texture="t_g006" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g007" file="../../../scenes/bedroom/mesh/m_g007.msh"/>
+    <texture name="t_g007" type="2d" file="tex/obj095.png"/>
+    <material name="mat_g007" texture="t_g007" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g008" file="../../../scenes/bedroom/mesh/m_g008.msh"/>
+    <texture name="t_g008" type="2d" file="tex/obj080.png"/>
+    <material name="mat_g008" texture="t_g008" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g009" file="../../../scenes/bedroom/mesh/m_g009.msh"/>
+    <texture name="t_g009" type="2d" file="tex/obj092.png"/>
+    <material name="mat_g009" texture="t_g009" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g010" file="../../../scenes/bedroom/mesh/m_g010.msh"/>
+    <texture name="t_g010" type="2d" file="tex/obj083.png"/>
+    <material name="mat_g010" texture="t_g010" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g011" file="../../../scenes/bedroom/mesh/m_g011.msh"/>
+    <texture name="t_g011" type="2d" file="tex/obj084.png"/>
+    <material name="mat_g011" texture="t_g011" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g012" file="../../../scenes/bedroom/mesh/m_g012.msh"/>
+    <texture name="t_g012" type="2d" file="tex/obj090.png"/>
+    <material name="mat_g012" texture="t_g012" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g013" file="../../../scenes/bedroom/mesh/m_g013.msh"/>
+    <texture name="t_g013" type="2d" file="tex/obj096.png"/>
+    <material name="mat_g013" texture="t_g013" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g014" file="../../../scenes/bedroom/mesh/m_g014.msh"/>
+    <texture name="t_g014" type="2d" file="tex/obj081.png"/>
+    <material name="mat_g014" texture="t_g014" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g015" file="../../../scenes/bedroom/mesh/m_g015.msh"/>
+    <texture name="t_g015" type="2d" file="tex/obj093.png"/>
+    <material name="mat_g015" texture="t_g015" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g016" file="../../../scenes/bedroom/mesh/m_g016.msh"/>
+    <texture name="t_g016" type="2d" file="tex/obj085.png"/>
+    <material name="mat_g016" texture="t_g016" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g017" file="../../../scenes/bedroom/mesh/m_g017.msh"/>
+    <texture name="t_g017" type="2d" file="tex/obj086.png"/>
+    <material name="mat_g017" texture="t_g017" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g018" file="../../../scenes/bedroom/mesh/m_g018.msh"/>
+    <texture name="t_g018" type="2d" file="tex/obj091.png"/>
+    <material name="mat_g018" texture="t_g018" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g019" file="../../../scenes/bedroom/mesh/m_g019.msh"/>
+    <texture name="t_g019" type="2d" file="tex/obj097.png"/>
+    <material name="mat_g019" texture="t_g019" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g020" file="../../../scenes/bedroom/mesh/m_g020.msh"/>
+    <texture name="t_g020" type="2d" file="tex/obj082.png"/>
+    <material name="mat_g020" texture="t_g020" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g021" file="../../../scenes/bedroom/mesh/m_g021.msh"/>
+    <texture name="t_g021" type="2d" file="tex/obj094.png"/>
+    <material name="mat_g021" texture="t_g021" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g022" file="../../../scenes/bedroom/mesh/m_g022.msh"/>
+    <texture name="t_g022" type="2d" file="tex/obj087.png"/>
+    <material name="mat_g022" texture="t_g022" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g023" file="../../../scenes/bedroom/mesh/m_g023.msh"/>
+    <texture name="t_g023" type="2d" file="tex/obj088.png"/>
+    <material name="mat_g023" texture="t_g023" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g024" file="../../../scenes/bedroom/mesh/m_g024.msh"/>
+    <texture name="t_g024" type="2d" file="tex/obj001.png"/>
+    <material name="mat_g024" texture="t_g024" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g025" file="../../../scenes/bedroom/mesh/m_g025.msh"/>
+    <texture name="t_g025" type="2d" file="tex/obj002.png"/>
+    <material name="mat_g025" texture="t_g025" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g026" file="../../../scenes/bedroom/mesh/m_g026.msh"/>
+    <texture name="t_g026" type="2d" file="tex/obj034.png"/>
+    <material name="mat_g026" texture="t_g026" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g027" file="../../../scenes/bedroom/mesh/m_g027.msh"/>
+    <texture name="t_g027" type="2d" file="tex/obj035.png"/>
+    <material name="mat_g027" texture="t_g027" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g028" file="../../../scenes/bedroom/mesh/m_g028.msh"/>
+    <texture name="t_g028" type="2d" file="tex/obj058.png"/>
+    <material name="mat_g028" texture="t_g028" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g029" file="../../../scenes/bedroom/mesh/m_g029.msh"/>
+    <texture name="t_g029" type="2d" file="tex/obj005.png"/>
+    <material name="mat_g029" texture="t_g029" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g030" file="../../../scenes/bedroom/mesh/m_g030.msh"/>
+    <texture name="t_g030" type="2d" file="tex/obj059.png"/>
+    <material name="mat_g030" texture="t_g030" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g031" file="../../../scenes/bedroom/mesh/m_g031.msh"/>
+    <texture name="t_g031" type="2d" file="tex/obj020.png"/>
+    <material name="mat_g031" texture="t_g031" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g032" file="../../../scenes/bedroom/mesh/m_g032.msh"/>
+    <texture name="t_g032" type="2d" file="tex/obj052.png"/>
+    <material name="mat_g032" texture="t_g032" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g033" file="../../../scenes/bedroom/mesh/m_g033.msh"/>
+    <texture name="t_g033" type="2d" file="tex/obj023.png"/>
+    <material name="mat_g033" texture="t_g033" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g034" file="../../../scenes/bedroom/mesh/m_g034.msh"/>
+    <texture name="t_g034" type="2d" file="tex/obj063.png"/>
+    <material name="mat_g034" texture="t_g034" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g035" file="../../../scenes/bedroom/mesh/m_g035.msh"/>
+    <texture name="t_g035" type="2d" file="tex/obj079.png"/>
+    <material name="mat_g035" texture="t_g035" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g036" file="../../../scenes/bedroom/mesh/m_g036.msh"/>
+    <texture name="t_g036" type="2d" file="tex/obj050.png"/>
+    <material name="mat_g036" texture="t_g036" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g037" file="../../../scenes/bedroom/mesh/m_g037.msh"/>
+    <texture name="t_g037" type="2d" file="tex/obj017.png"/>
+    <material name="mat_g037" texture="t_g037" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g038" file="../../../scenes/bedroom/mesh/m_g038.msh"/>
+    <texture name="t_g038" type="2d" file="tex/obj014.png"/>
+    <material name="mat_g038" texture="t_g038" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g039" file="../../../scenes/bedroom/mesh/m_g039.msh"/>
+    <texture name="t_g039" type="2d" file="tex/obj060.png"/>
+    <material name="mat_g039" texture="t_g039" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g040" file="../../../scenes/bedroom/mesh/m_g040.msh"/>
+    <texture name="t_g040" type="2d" file="tex/obj043.png"/>
+    <material name="mat_g040" texture="t_g040" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g041" file="../../../scenes/bedroom/mesh/m_g041.msh"/>
+    <texture name="t_g041" type="2d" file="tex/obj009.png"/>
+    <material name="mat_g041" texture="t_g041" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g042" file="../../../scenes/bedroom/mesh/m_g042.msh"/>
+    <texture name="t_g042" type="2d" file="tex/obj006.png"/>
+    <material name="mat_g042" texture="t_g042" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g043" file="../../../scenes/bedroom/mesh/m_g043.msh"/>
+    <texture name="t_g043" type="2d" file="tex/obj007.png"/>
+    <material name="mat_g043" texture="t_g043" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g044" file="../../../scenes/bedroom/mesh/m_g044.msh"/>
+    <texture name="t_g044" type="2d" file="tex/obj061.png"/>
+    <material name="mat_g044" texture="t_g044" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g045_0" file="../../../scenes/bedroom/mesh/m_g045_0.msh"/>
+    <texture name="t_g045_0" type="2d" file="tex/obj015.png"/>
+    <material name="mat_g045_0" texture="t_g045_0" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g045_1" file="../../../scenes/bedroom/mesh/m_g045_1.msh"/>
+    <texture name="t_g045_1" type="2d" file="tex/obj015.png"/>
+    <material name="mat_g045_1" texture="t_g045_1" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g046" file="../../../scenes/bedroom/mesh/m_g046.msh"/>
+    <texture name="t_g046" type="2d" file="tex/obj011.png"/>
+    <material name="mat_g046" texture="t_g046" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g047" file="../../../scenes/bedroom/mesh/m_g047.msh"/>
+    <texture name="t_g047" type="2d" file="tex/obj065.png"/>
+    <material name="mat_g047" texture="t_g047" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g048" file="../../../scenes/bedroom/mesh/m_g048.msh"/>
+    <texture name="t_g048" type="2d" file="tex/obj066.png"/>
+    <material name="mat_g048" texture="t_g048" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g049" file="../../../scenes/bedroom/mesh/m_g049.msh"/>
+    <texture name="t_g049" type="2d" file="tex/obj064.png"/>
+    <material name="mat_g049" texture="t_g049" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g050" file="../../../scenes/bedroom/mesh/m_g050.msh"/>
+    <texture name="t_g050" type="2d" file="tex/obj004.png"/>
+    <material name="mat_g050" texture="t_g050" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g051" file="../../../scenes/bedroom/mesh/m_g051.msh"/>
+    <texture name="t_g051" type="2d" file="tex/obj049.png"/>
+    <material name="mat_g051" texture="t_g051" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g052_0" file="../../../scenes/bedroom/mesh/m_g052_0.msh"/>
+    <texture name="t_g052_0" type="2d" file="tex/obj041.png"/>
+    <material name="mat_g052_0" texture="t_g052_0" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g052_1" file="../../../scenes/bedroom/mesh/m_g052_1.msh"/>
+    <texture name="t_g052_1" type="2d" file="tex/obj041.png"/>
+    <material name="mat_g052_1" texture="t_g052_1" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g053" file="../../../scenes/bedroom/mesh/m_g053.msh"/>
+    <texture name="t_g053" type="2d" file="tex/obj042.png"/>
+    <material name="mat_g053" texture="t_g053" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g054" file="../../../scenes/bedroom/mesh/m_g054.msh"/>
+    <texture name="t_g054" type="2d" file="tex/obj047.png"/>
+    <material name="mat_g054" texture="t_g054" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g055" file="../../../scenes/bedroom/mesh/m_g055.msh"/>
+    <texture name="t_g055" type="2d" file="tex/obj000.png"/>
+    <material name="mat_g055" texture="t_g055" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g056" file="../../../scenes/bedroom/mesh/m_g056.msh"/>
+    <texture name="t_g056" type="2d" file="tex/obj048.png"/>
+    <material name="mat_g056" texture="t_g056" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g057" file="../../../scenes/bedroom/mesh/m_g057.msh"/>
+    <texture name="t_g057" type="2d" file="tex/obj022.png"/>
+    <material name="mat_g057" texture="t_g057" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g058" file="../../../scenes/bedroom/mesh/m_g058.msh"/>
+    <texture name="t_g058" type="2d" file="tex/obj025.png"/>
+    <material name="mat_g058" texture="t_g058" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g059" file="../../../scenes/bedroom/mesh/m_g059.msh"/>
+    <texture name="t_g059" type="2d" file="tex/obj078.png"/>
+    <material name="mat_g059" texture="t_g059" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g060" file="../../../scenes/bedroom/mesh/m_g060.msh"/>
+    <texture name="t_g060" type="2d" file="tex/obj010.png"/>
+    <material name="mat_g060" texture="t_g060" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g061" file="../../../scenes/bedroom/mesh/m_g061.msh"/>
+    <texture name="t_g061" type="2d" file="tex/obj044.png"/>
+    <material name="mat_g061" texture="t_g061" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g062" file="../../../scenes/bedroom/mesh/m_g062.msh"/>
+    <texture name="t_g062" type="2d" file="tex/obj045.png"/>
+    <material name="mat_g062" texture="t_g062" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g063" file="../../../scenes/bedroom/mesh/m_g063.msh"/>
+    <texture name="t_g063" type="2d" file="tex/obj036.png"/>
+    <material name="mat_g063" texture="t_g063" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g064" file="../../../scenes/bedroom/mesh/m_g064.msh"/>
+    <texture name="t_g064" type="2d" file="tex/obj019.png"/>
+    <material name="mat_g064" texture="t_g064" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g065" file="../../../scenes/bedroom/mesh/m_g065.msh"/>
+    <texture name="t_g065" type="2d" file="tex/obj051.png"/>
+    <material name="mat_g065" texture="t_g065" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g066" file="../../../scenes/bedroom/mesh/m_g066.msh"/>
+    <texture name="t_g066" type="2d" file="tex/obj039.png"/>
+    <material name="mat_g066" texture="t_g066" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g067" file="../../../scenes/bedroom/mesh/m_g067.msh"/>
+    <texture name="t_g067" type="2d" file="tex/obj040.png"/>
+    <material name="mat_g067" texture="t_g067" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g068" file="../../../scenes/bedroom/mesh/m_g068.msh"/>
+    <texture name="t_g068" type="2d" file="tex/obj003.png"/>
+    <material name="mat_g068" texture="t_g068" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g069" file="../../../scenes/bedroom/mesh/m_g069.msh"/>
+    <texture name="t_g069" type="2d" file="tex/obj038.png"/>
+    <material name="mat_g069" texture="t_g069" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g070" file="../../../scenes/bedroom/mesh/m_g070.msh"/>
+    <texture name="t_g070" type="2d" file="tex/obj053.png"/>
+    <material name="mat_g070" texture="t_g070" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g071" file="../../../scenes/bedroom/mesh/m_g071.msh"/>
+    <texture name="t_g071" type="2d" file="tex/obj024.png"/>
+    <material name="mat_g071" texture="t_g071" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g072" file="../../../scenes/bedroom/mesh/m_g072.msh"/>
+    <texture name="t_g072" type="2d" file="tex/obj021.png"/>
+    <material name="mat_g072" texture="t_g072" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g073" file="../../../scenes/bedroom/mesh/m_g073.msh"/>
+    <texture name="t_g073" type="2d" file="tex/obj013.png"/>
+    <material name="mat_g073" texture="t_g073" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g074" file="../../../scenes/bedroom/mesh/m_g074.msh"/>
+    <texture name="t_g074" type="2d" file="tex/obj016.png"/>
+    <material name="mat_g074" texture="t_g074" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g075" file="../../../scenes/bedroom/mesh/m_g075.msh"/>
+    <texture name="t_g075" type="2d" file="tex/obj055.png"/>
+    <material name="mat_g075" texture="t_g075" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g076" file="../../../scenes/bedroom/mesh/m_g076.msh"/>
+    <texture name="t_g076" type="2d" file="tex/obj057.png"/>
+    <material name="mat_g076" texture="t_g076" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g077" file="../../../scenes/bedroom/mesh/m_g077.msh"/>
+    <texture name="t_g077" type="2d" file="tex/obj056.png"/>
+    <material name="mat_g077" texture="t_g077" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g078" file="../../../scenes/bedroom/mesh/m_g078.msh"/>
+    <texture name="t_g078" type="2d" file="tex/obj054.png"/>
+    <material name="mat_g078" texture="t_g078" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g079" file="../../../scenes/bedroom/mesh/m_g079.msh"/>
+    <texture name="t_g079" type="2d" file="tex/obj062.png"/>
+    <material name="mat_g079" texture="t_g079" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g080" file="../../../scenes/bedroom/mesh/m_g080.msh"/>
+    <texture name="t_g080" type="2d" file="tex/obj037.png"/>
+    <material name="mat_g080" texture="t_g080" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g081" file="../../../scenes/bedroom/mesh/m_g081.msh"/>
+    <texture name="t_g081" type="2d" file="tex/obj018.png"/>
+    <material name="mat_g081" texture="t_g081" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g082" file="../../../scenes/bedroom/mesh/m_g082.msh"/>
+    <texture name="t_g082" type="2d" file="tex/obj008.png"/>
+    <material name="mat_g082" texture="t_g082" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g083" file="../../../scenes/bedroom/mesh/m_g083.msh"/>
+    <texture name="t_g083" type="2d" file="tex/obj012.png"/>
+    <material name="mat_g083" texture="t_g083" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g084" file="../../../scenes/bedroom/mesh/m_g084.msh"/>
+    <texture name="t_g084" type="2d" file="tex/obj046.png"/>
+    <material name="mat_g084" texture="t_g084" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g085" file="../../../scenes/bedroom/mesh/m_g085.msh"/>
+    <texture name="t_g085" type="2d" file="tex/obj067.png"/>
+    <material name="mat_g085" texture="t_g085" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g086" file="../../../scenes/bedroom/mesh/m_g086.msh"/>
+    <texture name="t_g086" type="2d" file="tex/obj068.png"/>
+    <material name="mat_g086" texture="t_g086" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g087" file="../../../scenes/bedroom/mesh/m_g087.msh"/>
+    <texture name="t_g087" type="2d" file="tex/obj070.png"/>
+    <material name="mat_g087" texture="t_g087" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g088" file="../../../scenes/bedroom/mesh/m_g088.msh"/>
+    <texture name="t_g088" type="2d" file="tex/obj071.png"/>
+    <material name="mat_g088" texture="t_g088" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g089" file="../../../scenes/bedroom/mesh/m_g089.msh"/>
+    <texture name="t_g089" type="2d" file="tex/obj072.png"/>
+    <material name="mat_g089" texture="t_g089" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g090" file="../../../scenes/bedroom/mesh/m_g090.msh"/>
+    <texture name="t_g090" type="2d" file="tex/obj073.png"/>
+    <material name="mat_g090" texture="t_g090" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g091" file="../../../scenes/bedroom/mesh/m_g091.msh"/>
+    <texture name="t_g091" type="2d" file="tex/obj074.png"/>
+    <material name="mat_g091" texture="t_g091" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g092" file="../../../scenes/bedroom/mesh/m_g092.msh"/>
+    <texture name="t_g092" type="2d" file="tex/obj075.png"/>
+    <material name="mat_g092" texture="t_g092" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g093" file="../../../scenes/bedroom/mesh/m_g093.msh"/>
+    <texture name="t_g093" type="2d" file="tex/obj076.png"/>
+    <material name="mat_g093" texture="t_g093" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g094" file="../../../scenes/bedroom/mesh/m_g094.msh"/>
+    <texture name="t_g094" type="2d" file="tex/obj077.png"/>
+    <material name="mat_g094" texture="t_g094" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g095" file="../../../scenes/bedroom/mesh/m_g095.msh"/>
+    <texture name="t_g095" type="2d" file="tex/obj069.png"/>
+    <material name="mat_g095" texture="t_g095" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g096" file="../../../scenes/bedroom/mesh/m_g096.msh"/>
+    <texture name="t_g096" type="2d" file="tex/obj027.png"/>
+    <material name="mat_g096" texture="t_g096" specular="0" shininess="0" reflectance="0" emission="1"/>
+    <mesh name="m_g097" file="../../../scenes/bedroom/mesh/m_g097.msh"/>
+    <texture name="t_g097" type="2d" file="tex/exterior_eq.png"/>
+    <material name="mat_g097" texture="t_g097" specular="0" shininess="0" reflectance="0" emission="1"/>
+  </asset>
+  <worldbody>
+    <geom type="mesh" mesh="m_g000" material="mat_g000" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g001" material="mat_g001" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g002" material="mat_g002" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g003" material="mat_g003" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g004" material="mat_g004" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g005" material="mat_g005" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g006" material="mat_g006" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g007" material="mat_g007" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g008" material="mat_g008" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g009" material="mat_g009" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g010" material="mat_g010" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g011" material="mat_g011" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g012" material="mat_g012" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g013" material="mat_g013" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g014" material="mat_g014" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g015" material="mat_g015" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g016" material="mat_g016" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g017" material="mat_g017" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g018" material="mat_g018" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g019" material="mat_g019" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g020" material="mat_g020" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g021" material="mat_g021" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g022" material="mat_g022" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g023" material="mat_g023" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g024" material="mat_g024" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g025" material="mat_g025" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g026" material="mat_g026" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g027" material="mat_g027" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g028" material="mat_g028" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g029" material="mat_g029" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g030" material="mat_g030" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g031" material="mat_g031" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g032" material="mat_g032" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g033" material="mat_g033" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g034" material="mat_g034" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g035" material="mat_g035" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g036" material="mat_g036" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g037" material="mat_g037" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g038" material="mat_g038" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g039" material="mat_g039" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g040" material="mat_g040" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g041" material="mat_g041" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g042" material="mat_g042" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g043" material="mat_g043" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g044" material="mat_g044" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g045_0" material="mat_g045_0" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g045_1" material="mat_g045_1" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g046" material="mat_g046" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g047" material="mat_g047" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g048" material="mat_g048" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g049" material="mat_g049" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g050" material="mat_g050" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g051" material="mat_g051" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g052_0" material="mat_g052_0" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g052_1" material="mat_g052_1" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g053" material="mat_g053" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g054" material="mat_g054" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g055" material="mat_g055" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g056" material="mat_g056" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g057" material="mat_g057" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g058" material="mat_g058" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g059" material="mat_g059" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g060" material="mat_g060" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g061" material="mat_g061" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g062" material="mat_g062" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g063" material="mat_g063" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g064" material="mat_g064" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g065" material="mat_g065" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g066" material="mat_g066" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g067" material="mat_g067" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g068" material="mat_g068" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g069" material="mat_g069" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g070" material="mat_g070" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g071" material="mat_g071" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g072" material="mat_g072" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g073" material="mat_g073" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g074" material="mat_g074" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g075" material="mat_g075" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g076" material="mat_g076" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g077" material="mat_g077" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g078" material="mat_g078" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g079" material="mat_g079" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g080" material="mat_g080" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g081" material="mat_g081" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g082" material="mat_g082" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g083" material="mat_g083" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g084" material="mat_g084" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g085" material="mat_g085" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g086" material="mat_g086" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g087" material="mat_g087" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g088" material="mat_g088" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g089" material="mat_g089" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g090" material="mat_g090" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g091" material="mat_g091" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g092" material="mat_g092" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g093" material="mat_g093" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g094" material="mat_g094" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g095" material="mat_g095" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g096" material="mat_g096" group="2" contype="0" conaffinity="0"/>
+    <geom type="mesh" mesh="m_g097" material="mat_g097" group="2" contype="0" conaffinity="0"/>
+  </worldbody>
+</mujoco>

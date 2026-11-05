@@ -1,0 +1,38 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-serve"
+version = "0.1.0"
+description = "On-device model serving for halo: one GPU-owning engine for the motion generator and the local orchestrator model."
+requires-python = ">=3.10"
+# torch and the generator package are installed separately; see system/README.md.
+dependencies = [
+    "numpy",
+    "pyzmq>=25",
+]
+
+[project.optional-dependencies]
+# Apple-silicon acceleration (MLX DiT / VLM encoder, local orchestrator model).
+# Apple Silicon only. mlx-vlm < 0.8: backends/prefix_cache.py uses its internal generate/cache modules.
+mlx = [
+    "mlx>=0.32.2",
+    "mlx-vlm>=0.7.2,<0.8",
+    "llguidance>=1.7",
+]
+
+[tool.setuptools]
+packages = [
+    "halo_serve",
+    "halo_serve.adapters",
+    "halo_serve.api",
+    "halo_serve.backends",
+    "halo_serve.integrations",
+    "halo_serve.runtime",
+]

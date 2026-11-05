@@ -1,0 +1,378 @@
+{
+ "room": "sp02_bedroom_p016",
+ "assets": [
+  {
+   "asset": "abo_B07374K53B",
+   "source": "abo",
+   "name": "grey drum-shade wall sconce with brass arm and round brass wall plate",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B073P5KN79",
+   "source": "abo",
+   "name": "square gold-framed black and white Paris street map print",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B073WHYS32",
+   "source": "abo",
+   "name": "round wall mirror with gold iron wire sunburst frame",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B074KKXLK1",
+   "source": "abo",
+   "name": "tall narrow dark oak bookcase with three open shelves, two drawers with brass pulls and a brass metal base frame",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075HXHKVF",
+   "source": "abo",
+   "name": "round speckled stoneware lidded jewelry box with glazed body, rust-brown rim and unglazed tan base",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075QDGZX9",
+   "source": "abo",
+   "name": "grey velvet channel-tufted king bed with scalloped headboard, footboard and tapered wood legs",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075X12JW7",
+   "source": "abo",
+   "name": "white glass hourglass table lamp with brass base and light grey drum shade",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075X2PC3L",
+   "source": "abo",
+   "name": "six-drawer walnut dresser with black frame, brass knobs and tapered brass-tipped legs",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075X3WD5T",
+   "source": "abo",
+   "name": "black mid-century nightstand with two walnut drawers, brass knobs and black legs with brass caps",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075YL5LFQ",
+   "source": "abo",
+   "name": "square barnwood quilt-star wall art in a light wood frame",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B075YNL6Z5",
+   "source": "abo",
+   "name": "framed sea fan coral print with thin gold frame on white background",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B078JGYJTG",
+   "source": "abo",
+   "name": "white ceramic bottle vase with coral drip glaze band and tan unglazed base",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B078JM52VN",
+   "source": "abo",
+   "name": "rectangular blue marble-effect serving tray with gold bar handles",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B079L8TCVJ",
+   "source": "abo",
+   "name": "nickel silver 5x7 photo frame with white mat and black easel back",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B079LFHQPM",
+   "source": "abo",
+   "name": "black tabletop photo picture frame with white mat and easel back stand",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07B4GVNMV",
+   "source": "abo",
+   "name": "navy velvet upholstered rectangular ottoman with turned wooden legs and brass casters",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07B7J8FV9",
+   "source": "abo",
+   "name": "round three-leg side table with white marble top, walnut lower shelf and brass frame",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07B8PXJJW",
+   "source": "abo",
+   "name": "round modern wall clock with brass frame and green-blue dial",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07B8PXQ49",
+   "source": "abo",
+   "name": "round blue-green marbled ceramic jewelry box with lid and gold rim band",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07DBB1S8N",
+   "source": "abo",
+   "name": "espresso wood entryway storage bench with grey upholstered cushion and open cubby shelves",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07DBCFM4F",
+   "source": "abo",
+   "name": "cream tufted upholstered lift-top storage bench with nailhead trim and dark wood legs",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07F3W4QWM",
+   "source": "abo",
+   "name": "white fabric cube storage bin with oval handle cutouts",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07HKFRTVC",
+   "source": "abo",
+   "name": "six-globe semi-flush mount ceiling light with dark bronze curved arms and white frosted glass globes",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07HSJZZNY",
+   "source": "abo",
+   "name": "black and white geometric brushstroke print canvas wall art",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07HSMVFKY",
+   "source": "abo",
+   "name": "set of three round woven cotton and jute storage baskets with cream and natural stripes and cut-out handles",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07JKJKDKD",
+   "source": "abo",
+   "name": "square reversible throw pillow with blush corduroy front and coral velvet back",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07JLZC56G",
+   "source": "abo",
+   "name": "blush pink shiny crushed velvet square throw pillow",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07NYSJWQF",
+   "source": "abo",
+   "name": "rust brown rectangular area rug with cream ogee lattice pattern",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07QC8CB15",
+   "source": "abo",
+   "name": "cream ceramic barrel vase with carved gold-tan feather pattern and gold rim",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B07QJLYXGY",
+   "source": "abo",
+   "name": "4x6 ft hand-tufted cotton-wool area rug with geometric feathered pattern in black and cream",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B082PCMFY3",
+   "source": "abo",
+   "name": "emerald green velvet scalloped shell-back accent chair with channel tufting and gold tapered metal legs",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "abo_B082XMFBY2",
+   "source": "abo",
+   "name": "globe stick floor lamp with white glass globe shade, slim brass pole and black marble cylinder base",
+   "license": "CC BY 4.0 (Amazon Berkeley Objects)"
+  },
+  {
+   "asset": "obj_0cd51caee3e1",
+   "source": "objaverse",
+   "name": "natural rattan woven storage basket with raised handle ends",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "0cd51caee3e14b2d92efaef53c7c0196",
+   "sketchfab_name": "Rattan Tray",
+   "sketchfab_author": "eeelabvisual",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/rattan-tray-0cd51caee3e14b2d92efaef53c7c0196"
+  },
+  {
+   "asset": "obj_696eabb35c77",
+   "source": "objaverse",
+   "name": "standing hardcover book 'Fran\u00e7ois Truffaut' with tan cover and black-and-white photo strip",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "696eabb35c77420a848a1d2bf6fa812d",
+   "sketchfab_name": "Fran\u00e7ois Truffaut for #3DScanBooks challenge",
+   "sketchfab_author": "raphael",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/francois-truffaut-for-3dscanbooks-challenge-696eabb35c77420a848a1d2bf6fa812d"
+  },
+  {
+   "asset": "obj_72e529836ebb",
+   "source": "objaverse",
+   "name": "weathered grey-brown ceramic bowl with cracked, reassembled surface",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_921bfd09e379",
+   "source": "objaverse",
+   "name": "pair of black rubber slide sandals with wide cross strap",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_9bb1101fce97",
+   "source": "objaverse",
+   "name": "walnut two-door wardrobe with chevron veneer doors, long black bar handles and black metal frame base",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "9bb1101fce9748b68b5f24c0f48bc0b1",
+   "sketchfab_name": "Estilo Cabinet",
+   "sketchfab_author": "Sgt_Grapefruit",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/estilo-cabinet-9bb1101fce9748b68b5f24c0f48bc0b1"
+  },
+  {
+   "asset": "obj_ae720683ec92",
+   "source": "objaverse",
+   "name": "crocheted tote bag with cream handles and two-tone blue stripes",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_b08a7135cad8",
+   "source": "objaverse",
+   "name": "stack of four Harry Potter hardcover books with colorful spines",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "b08a7135cad84e0ca222a8cff075109b",
+   "sketchfab_name": "Harry Potter Books Stack",
+   "sketchfab_author": "milkislegit",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/harry-potter-books-stack-b08a7135cad84e0ca222a8cff075109b"
+  },
+  {
+   "asset": "obj_b56cc6ebea14",
+   "source": "objaverse",
+   "name": "white pillar candle in brass chamberstick holder with finger loop",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "b56cc6ebea1441f0aab1c1cc36299ecc",
+   "sketchfab_name": "Low-poly Gravity Falls themed candle",
+   "sketchfab_author": "Kanna-nakajima",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/low-poly-gravity-falls-themed-candle-b56cc6ebea1441f0aab1c1cc36299ecc"
+  },
+  {
+   "asset": "obj_b8478cea5145",
+   "source": "objaverse",
+   "name": "pale yellow ceramic coffee mug with square handle",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_cabd5910411b",
+   "source": "objaverse",
+   "name": "round woven rattan storage basket with handles and scalloped lid leaning against side",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "cabd5910411b497a9698931246faa95a",
+   "sketchfab_name": "Dobi Basket",
+   "sketchfab_author": "eeelabvisual",
+   "sketchfab_license": "CC Attribution",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/dobi-basket-cabd5910411b497a9698931246faa95a"
+  },
+  {
+   "asset": "obj_cdcf15664193",
+   "source": "objaverse",
+   "name": "brass and tan leather over-ear headphones",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_d07d3bdfb250",
+   "source": "objaverse",
+   "name": "open paperback Harry Potter book (French edition, 'Et le prisonnier d'Azkaban') standing upright",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": "d07d3bdfb250443d8c2251eeb3c40735",
+   "sketchfab_name": "Harry Potter Book",
+   "sketchfab_author": "beach_54",
+   "sketchfab_license": "CC Attribution-NonCommercial-ShareAlike",
+   "sketchfab_license_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "sketchfab_url": "https://sketchfab.com/3d-models/harry-potter-book-d07d3bdfb250443d8c2251eeb3c40735"
+  },
+  {
+   "asset": "obj_ea94a300fbb1",
+   "source": "objaverse",
+   "name": "tan leather satchel backpack with buckled front flap and shoulder straps",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "obj_f5e8252067fc",
+   "source": "objaverse",
+   "name": "faceted stoneware mug with grey-white ash glaze and handle",
+   "license": "per-object (Objaverse; mostly CC-BY)",
+   "objaverse_uid": null
+  },
+  {
+   "asset": "ph_brass_vase_03",
+   "source": "polyhaven",
+   "name": "small engraved brass pedestal vase with flared rim and footed base",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_cardboard_box_01",
+   "source": "polyhaven",
+   "name": "worn brown cardboard shipping box with white strapping band and tape",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_potted_plant_01",
+   "source": "polyhaven",
+   "name": "leafy green shrub in terracotta urn-style footed pot",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_potted_plant_02",
+   "source": "polyhaven",
+   "name": "arrowhead plant (syngonium) in round terracotta clay pot",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_potted_plant_04",
+   "source": "polyhaven",
+   "name": "small zebra haworthia succulent in white ribbed ceramic pot with pebble topping",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_watering_can_metal_01",
+   "source": "polyhaven",
+   "name": "galvanized metal watering can with long spout and loop handle",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_wicker_basket_02",
+   "source": "polyhaven",
+   "name": "woven bamboo storage basket with small feet and loose lid leaning against its side",
+   "license": "CC0"
+  },
+  {
+   "asset": "ph_wooden_crate_01",
+   "source": "polyhaven",
+   "name": "rustic wooden storage chest with hinged lid, metal hasp and rope side handles",
+   "license": "CC0"
+  }
+ ]
+}

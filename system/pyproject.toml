@@ -1,0 +1,40 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-system"
+version = "0.1.0"
+description = "System orchestration for halo: closed-loop launchers, nodes and the web viewer."
+requires-python = ">=3.10"
+# Kept minimal: torch, mujoco, opencv, the generator/tracker packages, halo-comm
+# (system/comm/python) and halo-serve (system/serve/python) are installed separately;
+# see system/README.md.
+dependencies = [
+    "numpy",
+    "pyyaml",
+    "pillow",       # viewer textures, depth PNGs
+    "trimesh>=4",   # viewer scene meshes
+]
+
+[project.optional-dependencies]
+real = [
+    "depthai>=3,<4",   # OAK camera (run_real.py)
+]
+
+[tool.setuptools]
+packages = [
+    "halo_system",
+    "halo_system.lib",
+    "halo_system.nodes",
+    "halo_system.visualization",
+    "halo_system.scripts",
+]
+
+[tool.setuptools.package-data]
+"halo_system.visualization" = ["static/**/*"]

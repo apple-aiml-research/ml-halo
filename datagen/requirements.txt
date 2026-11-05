@@ -1,0 +1,21 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# datagen: the generator's requirements plus the CPU packages the pipeline imports. Enough for scene analysis,
+# motion check, MuJoCo render, stitch and loading the dataset with generator/data/dataset.py.
+-r ../generator/requirements.txt
+opencv-python
+imageio[ffmpeg]
+trimesh
+pillow
+shapely              # scene_gen/spec (scene lists)
+scipy                # placement, MuJoCo render, motion_check
+usd-core             # chair USDZ reader (MuJoCo render)
+pandas               # dataset parquet writer
+
+# Not pip packages; each step's setup script installs them (README.md, Setup):
+#   Blender 5.2 + Infinigen    scene generation, bake and analysis (step 1, scene_gen/env/setup_scene_gen.sh)
+#   Kimodo + model weights     motion generation (step 2, motion_gen/pod/setup_kimodo.sh)
+#   Isaac Lab 2.3 / Sim 5.1    Isaac render (step 3, the official Isaac Lab container)

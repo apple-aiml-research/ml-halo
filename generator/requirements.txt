@@ -1,0 +1,25 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Core
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+
+# VLM backbone (Qwen3.5)
+transformers>=4.57.0
+
+# Data
+pyarrow>=12.0.0
+boto3                 # s3:// datasets
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Video decoding
+av>=10.0.0
+
+# Open-loop evaluation (skeleton rendering)
+mujoco
+matplotlib

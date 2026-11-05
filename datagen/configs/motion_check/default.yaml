@@ -1,0 +1,17 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Motion-quality-checker default thresholds (all tasks).
+#
+# These overlay the dataclass defaults in motion_gen/motion_check/config.py; a per-task
+# file (e.g. sit_on_chair.yaml) then overlays these. Only list values that differ
+# from the code defaults.
+#
+# --- jitter (set on 10 Kimodo episodes) ---
+# 30 fps Kimodo motion has a root-jerk RMS of ~50-60 m/s^3 even on clean
+# episodes, so a 40/80 warn/fail flags everything. At 75/120 a clean episode
+# passes and only trembling motion warns or fails.
+dyn_jitter_jerk_mps3: 75.0     # warn above this
+dyn_jitter_fail: 120.0         # fail above this

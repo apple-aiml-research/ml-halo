@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+labsofa: the lab sofa of the sit-on-sofa clips (labsofa_*), a fixed terrain asset.
+
+Visual = the full mesh (labsofa.obj, Y-up). Collision = five primitive boxes (seat, base, backrest, two
+armrests), not the mesh: a single mesh collides by its convex hull, which fills the seat pocket so the robot
+would land on a flat hull top at armrest height. The seat top is at 0.42 m in the mesh frame, just under where
+the reference pelvis settles on the soft cushion; the front bottom is left open for tucked feet.
+
+The world_to_labsofa origin places the sofa where the clips' reference robot sits: seated pelvis centered
+between the armrests, facing the sofa's forward direction.
+-->
+<robot name="labsofa">
+  <link name="world"/>
+
+  <link name="labsofa_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="labsofa.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <material name="labsofa_material">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+
+    <collision name="labsofa_seat">
+      <origin xyz="0 0.31 0.16" rpy="0 0 0"/>
+      <geometry><box size="0.88 0.22 0.62"/></geometry>
+    </collision>
+    <collision name="labsofa_base">
+      <origin xyz="0 0.10 -0.185" rpy="0 0 0"/>
+      <geometry><box size="0.88 0.20 0.57"/></geometry>
+    </collision>
+    <collision name="labsofa_backrest">
+      <origin xyz="0 0.525 -0.31" rpy="0 0 0"/>
+      <geometry><box size="0.88 0.65 0.32"/></geometry>
+    </collision>
+    <collision name="labsofa_armrest_left">
+      <origin xyz="0.38 0.53 0.22" rpy="0 0 0"/>
+      <geometry><box size="0.12 0.22 0.40"/></geometry>
+    </collision>
+    <collision name="labsofa_armrest_right">
+      <origin xyz="-0.38 0.53 0.22" rpy="0 0 0"/>
+      <geometry><box size="0.12 0.22 0.40"/></geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="15.0"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.4"/>
+    </inertial>
+  </link>
+
+  <joint name="world_to_labsofa" type="fixed">
+    <parent link="world"/>
+    <child link="labsofa_link"/>
+    <origin xyz="1.166 2.0476 -0.02" rpy="1.5708 0. -0.4464"/>
+  </joint>
+</robot>

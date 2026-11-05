@@ -1,0 +1,26 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Ignore build outputs
+build/
+.cache/
+compile_commands.json
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# FetchContent workdir
+_deps/
+
+# TRT plan artifacts (regenerated from ONNX)
+*.plan
+*.engine
+
+# Vendored FetchContent sources (tools/vendor_third_party.sh, README.md "Offline builds")
+third_party/

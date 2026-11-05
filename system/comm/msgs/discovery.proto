@@ -1,0 +1,63 @@
+//
+// For licensing see accompanying LICENSE file.
+// Copyright (C) 2026 Apple Inc. All Rights Reserved.
+//
+
+syntax = "proto3";
+
+// Discovery domain for the halo_comm middleware — the OPT-IN master registry.
+//
+// ZMQ has no discovery layer: on the wire a channel is identified only by its
+// TCP port, and a node must be told (pattern, host, port, types) up front. The
+// master registry below is that directory — providers register by name,
+// consumers resolve by name. When providers live on DIFFERENT hosts (e.g. tracker on the robot NX,
+// generator on a Mac mini), a single --host can't address them all.
+//
+// The master registry solves that: every provider (a node that BINDs a service
+// or publisher) registers its real host:port with one well-known registry
+// (ROS2 "Discovery Server" model — the registry's own address is CONFIGURED via
+// HALO_COMM_REGISTRY, not discovered). Consumers then query the registry and
+// connect to each channel at its actual address. Registry is discovery-only:
+// the ZMQ data path stays brokerless, so a registry outage never drops live
+// connections.
+//
+// Field-number stability is the contract — never renumber or reuse a tag.
+
+package motion_msgs;
+
+// One registered endpoint (a bound service or publisher).
+message Endpoint {
+  string name     = 1;   // channel name, e.g. "g1/state"
+  string pattern  = 2;   // "REQ/REP" | "PUB/SUB"
+  string req_type = 3;   // service request message name (REQ/REP), else ""
+  string rep_type = 4;   // service reply message name (REQ/REP), else ""
+  string msg_type = 5;   // topic message name (PUB/SUB), else ""
+  string host     = 6;   // ADVERTISED host reachable by consumers (not 0.0.0.0)
+  int32  port     = 7;
+  string node     = 8;   // owning node name (Node.name)
+  int32  pid       = 9;  // owning process pid (best-effort)
+  double stamp    = 10;  // wall-clock seconds of the last (re)register
+  string role     = 11;  // "provider" (binds this channel) | "consumer" (uses it);
+                         // empty is treated as provider (older/C++ registrations)
+}
+
+// Consumer/provider -> registry: one request envelope. The registry service is a
+// single REQ/REP, so all ops share one request type (op selects the action).
+//   REGISTER   : upsert `endpoint` with lifetime `ttl_s` (heartbeat re-sends it)
+//   UNREGISTER : withdraw the endpoint matching endpoint.{name,host,port}
+//   LIST       : return the current snapshot (endpoint ignored)
+message RegistryRequest {
+  enum Op { LIST = 0; REGISTER = 1; UNREGISTER = 2; }
+  Op       op       = 1;
+  Endpoint endpoint = 2;
+  double   ttl_s    = 3;   // REGISTER lifetime; 0 => registry default
+}
+
+// registry -> caller: reply to any RegistryRequest. For register/unregister only
+// `ok` is set; for LIST, `endpoints` is filled.
+message RegistryReply {
+  bool              ok        = 1;
+  repeated Endpoint endpoints = 2;
+  double            now       = 3;   // registry wall-clock (for staleness calc)
+}
+

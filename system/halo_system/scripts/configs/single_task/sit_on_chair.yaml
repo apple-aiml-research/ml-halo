@@ -1,0 +1,37 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# sit_on_chair: single task in the bedroom scene. Sit on the armchair; starts 0.75 m in front of the seat, facing it.
+#   python system/halo_system/scripts/run_sim.py --task_config system/halo_system/scripts/configs/single_task/sit_on_chair.yaml --web
+name: task_sit_on_chair
+agentic: false
+prompt: sit arm_chair
+instruction: ''
+scene_xml: assets/scenes/bedroom/bedroom.xml
+start:
+  pos:
+  - 6.432
+  - 4.133
+  - 0.79
+  yaw: 50.0
+# Models: not in the repository. Replace each <...> with your own file (see "Tasks" in
+# system/README.md). One generator and one tracker serve every subtask.
+checkpoint: <your_generator_checkpoint.pt>   # generator weights
+gen_config: <your_generator_config.yaml>     # the generator config the checkpoint was trained with
+policy_path: <your_tracker_policy.onnx>     # tracker policy ONNX with a depth input (pairs with robot_config)
+robot_config: tracker/deploy_cpp/configs/g1_v2_depth_sim.yaml
+duration: 0
+gen_interval: 0.4        # seconds between generations
+initial_subtask: sit
+subtasks:
+  sit:
+    prompt: sit arm_chair
+    rebase_robot_when_quiet: true   # anchor on the robot once sit's plan is quiet
+orchestrator:
+  enabled: false
+hide_bodies:   # objects this skill does not use
+- human
+- box_object
+- object5_root

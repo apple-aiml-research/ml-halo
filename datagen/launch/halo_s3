@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# halo_s3 -- `aws s3`-style copy/list for shell stages, on S3 or a local disk.
+#
+#   halo_s3 cp [--recursive] [--exclude P] [--include P] SRC DST
+#   halo_s3 sync SRC DST [--exclude P] [--include P]
+#   halo_s3 ls [--recursive] PREFIX
+#   halo_s3 exists KEY            (exit 0 if present)
+#   halo_s3 rm [--recursive] KEY
+#
+# Any s3:// argument: runs `aws s3 "$@"` (standard AWS_* credentials; AWS_ENDPOINT_URL
+# for MinIO/R2/...). Only local paths: common/storage.py with the same semantics,
+# so a stage can run with HALO_S3_ROOT=/data/halo and no S3 at all.
+# launch/run_stage.sh puts this directory on PATH.
+for a in "$@"; do
+    case "$a" in
+        s3://*)
+            [ "$1" = exists ] && break
+            exec aws s3 "$@" ${AWS_ENDPOINT_URL:+--endpoint-url "$AWS_ENDPOINT_URL"} ;;
+    esac
+done
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PY="${HALO_PYTHON:-}"
+if [ -z "$PY" ]; then
+    for c in python3 python "${INFINIGEN_ENV:-/opt/infinigen_env}/bin/python" \
+             /isaac-sim/kit/python/bin/python3; do
+        command -v "$c" >/dev/null 2>&1 && { PY="$c"; break; }
+    done
+fi
+[ -n "$PY" ] || { echo "halo_s3: no python found (set HALO_PYTHON)" >&2; exit 127; }
+exec "$PY" "$HERE/../common/storage.py" "$@"

@@ -1,0 +1,41 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-comm"
+version = "0.1.0"
+description = "ROS2-style middleware over ZMQ (TCP) with protobuf messages, for the halo tracker<->generator link."
+requires-python = ">=3.10"
+dependencies = [
+    "pyzmq>=25",
+    # The committed *_pb2.py gencode is stamped for runtime 5.29.x — it must be
+    # generated with protoc RELEASE 29.x (`make protoc29 && make protos`). At
+    # import time protobuf enforces runtime >= gencode AND the same major, so we
+    # cap the major to <6: a newer protoc (e.g. brew's 35 → gencode 7.x) yields
+    # *_pb2.py that this 5.29 runtime REFUSES to load (VersionError). See
+    # system/comm/Makefile for the codegen/version-pin notes; CI runs
+    # `make check-protos` (no-diff gate).
+    "protobuf>=5.29,<6",
+]
+
+# `halo_comm` CLI: `halo_comm echo g1/state`, `halo_comm list --probe`, ... (see halo_comm/cli.py).
+# Also runnable as `python -m halo_comm` via halo_comm/__main__.py.
+[project.scripts]
+halo_comm = "halo_comm.cli:main"
+
+[tool.setuptools.packages.find]
+# This pyproject.toml lives in system/comm/python/, alongside the halo_comm package,
+# so packages are discovered from this directory (".") — not a "python/"
+# subdir. Install with `pip install -e system/comm/python` (or from here, `-e .`).
+where = ["."]
+include = ["halo_comm*"]
+
+# NOTE: generated python/halo_comm/msgs/*_pb2.py are committed (so `pip install -e .`
+# works without protoc on the host). Regenerate with `make protos` after editing
+# msgs/*.proto; CI runs `make check-protos` to enforce they stay in sync.

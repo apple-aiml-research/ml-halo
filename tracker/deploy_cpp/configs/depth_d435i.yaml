@@ -1,0 +1,221 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Depth-source configuration for the G1 depth student (torso-mounted D435i).
+#
+# Loaded by rt_deploy::vision::load_vision_config (build with
+# -DRT_DEPLOY_WITH_REALSENSE=ON). deploy_g1_real takes it through --depth_config
+# (with --depth_source / --depth_plan; apps/g1/depth_setup.hpp) and feeds the
+# control loop's depth inbox. Nothing opens a camera unless a binary is explicitly given this file,
+# so it is inert for every proprioceptive-only policy. See docs/depth.md.
+#
+# The producer selected here publishes 48x84 float32 depth in METRES into a
+# wait-free triple buffer (core::TripleBuffer<g1::DepthFrame>); the consumer
+# takes the newest frame with one non-blocking read. The producer threads never
+# run on, or block, the control loop's thread.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ========== Which depth producer ==========
+#   cleaned — D435i IR1/IR2 (emitter OFF) -> LiteAnyStereo via TensorRT ->
+#             fx*B/disp -> 84x48. The sim2real path the policy was trained for.
+#             Needs a GPU, CUDA and the plan_path below.
+#   raw     — the D435i's own on-chip Z16 depth -> metres -> 84x48. No GPU, no
+#             TRT, no CUDA. Fallback and A/B reference for the cleaned path.
+# An unrecognised value is a hard error, never a silent default: a typo here
+# would run the wrong estimator with no visible symptom.
+# Override without editing this file: --depth_source cleaned|raw
+depth_source: cleaned
+
+# ========== Camera / network input resolution ==========
+# The IR streaming resolution IS the resolution fed to the network, so it drives
+# cost, not output size (depth is reduced to out_width x out_height below).
+# 424x240 is a native D435i IR mode, runs inside the 30 FPS budget on Orin NX,
+# and its fx lands within ~0.5% of the training camera's 42.19 px once reduced to
+# 84x48. Use a native IR mode; the engine replicate-pads whatever you set here up
+# to the plan's own 32-divisible input dims, so the capture size itself need not
+# be a multiple of 32 — but it MUST NOT exceed the dims the plan was built for.
+width:  424
+height: 240
+fps:    30
+
+# IR projector (the dot pattern).
+#   depth_source: cleaned -> MUST be false. The dots are structured noise to a
+#                            learned matcher and visibly degrade its disparity.
+#   depth_source: raw     -> usually TRUE. The on-chip block matcher is a
+#                            classical correlator and the projected texture is
+#                            exactly what it needs on blank walls and floors.
+# So switching depth_source flips this too; the --depth_source command-line
+# override does that for you (raw -> true, cleaned -> false).
+emitter: false
+
+# serial: "0123456789"   # uncomment to bind one specific D435i (multi-camera rigs)
+
+# ========== Inference (depth_source: cleaned only) ==========
+# TensorRT engine for LiteAnyStereo. No exporter ships in this tree: export the
+# LiteAnyStereo checkpoint to ONNX yourself at the SAME width/height as above
+# (inputs: left/right IR images; output: disparity), then build the plan with
+# onnx_to_trt (docs/depth.md). A .plan is not portable across devices or
+# TensorRT versions — build it on the Orin it will run on.
+#
+# MODEL VARIANTS. The engine reads the plan's own IO names, dtypes and padded
+# dims at load and refuses a plan that does not match this file, so LAS1 and
+# LAS2-S/M/L/H are just different values of plan_path (or --depth_plan PATH on
+# the command line), with no rebuild.
+#
+# The plan's padded input is >= the width/height above, rounded up to a multiple
+# of 32 (the feature pyramid's requirement), so a 424x240 capture wants a
+# 448x256 plan. That is why a plan NAMED 424x240 reports
+# padded=448x256 at startup.
+#
+# Accepts a {ROOT_DIR} placeholder (expanded exactly like xml_path in the robot
+# configs: the nearest ancestor directory of this file that contains
+# assets/robots/, else this file's directory):
+#   plan_path: "{ROOT_DIR}/tracker/deploy/models/g1/las_424x240_orin.plan"
+# NOTE the placeholder is a YAML-only convenience; a --depth_plan path on the
+# command line is taken literally, like any other shell path.
+plan_path: "las_424x240_orin.plan"
+device_id: 0
+use_cuda_graph: true   # captures the fixed-shape submit once; removes per-frame
+                       # launch overhead, which matters on the shared iGPU
+
+# ========== Output — the `student_depth` observation ==========
+# MUST stay 84x48: this is g1::DepthFrame::kCols x kRows, the compile-time shape
+# of the policy's depth observation. Any other value is rejected at startup.
+out_width:  84
+out_height: 48
+
+# Metric clip window [m]. Valid depth below clip_min_m clamps UP to clip_min_m;
+# valid depth above clip_max_m, and every INVALID sample (no disparity, the
+# left-occlusion shadow, a D435i zero) maps to clip_max_m — the FAR plane, never
+# 0. Training encodes missing data as far so the CNN never sees a phantom close
+# obstacle.
+#
+# THESE MUST EQUAL observation.groups.student_depth.clip in the policy config.
+# apps/g1/depth_setup.hpp loads both and REFUSES TO START if they disagree: two
+# independent copies of this number drift silently. The observation group is the
+# policy's contract, so it is the one to fix.
+#
+# It is not merely redundant, it is lossy one way round: a near clip ABOVE the
+# group's flattens everything between them onto this value, discarding the closest
+# band — where being wrong matters most — and nothing later can recover it.
+#
+# 0.2 / 2.5 is the tracker's training DEPTH_CLIP. Change these only alongside a
+# retrained policy, and update the observation group in the same commit.
+clip_min_m: 0.2
+clip_max_m: 2.5
+
+# How the full-resolution depth is reduced to the 84x48 grid.
+#
+# IMPORTANT CONTEXT: training never downsampled at all. It rendered 48x84
+# NATIVELY, so its pixel dropout set WHOLE output cells to far rather than mixing
+# a far fraction into every one. On hardware we reduce 424x240 -> 84x48, so the
+# choice here is a sim2real decision with no exact training counterpart.
+#
+#   area_valid — mean over the pixels the sensor ACTUALLY MEASURED. Holes are
+#                excluded from the average rather than entering it at clip_max; a
+#                cell reads far only when its whole footprint is invalid. Genuine
+#                far readings are far-clamped and kept, because they are data.
+#                THE DEFAULT, and what the Python deployment
+#                (tracker/deploy/g1/depth_sources.py) does.
+#   area       — plain mean over the footprint. BIASED: it averages the far-filled
+#                holes, so every cell reads farther by an amount that tracks local
+#                hole density, so a near wall reads farther than it is. Kept only as
+#                the A/B reference that shows the bias; do not deploy it.
+#   min        — closest depth in the footprint. Conservative (never hides an
+#                obstacle) and naturally immune to the far-fill bias, but biases
+#                the image NEARER than training, which point-sampled. A reasonable
+#                safety-first alternative if area_valid ever reads too permissive.
+#   point      — nearest-neighbour at the footprint centre. Closest analogue to the
+#                training renderer, but keeps the sensor speckle the means suppress.
+downsample: area_valid
+
+# Optional intrinsics override for offline / recorded-IR replay. 0 = read the
+# live values from the camera (the normal case).
+fx_override: 0.0
+baseline_m_override: 0.0
+
+# ========== Run control ==========
+# Depth publish cadence [Hz]; 0 = free-run. Keep it at or below `fps` — there is
+# nothing new to publish faster than the camera delivers. The policy runs at
+# 50 Hz and simply re-reads the newest frame, so 30 Hz depth is by design.
+# Overruns resync to "now" rather than catching up, so a slow inference degrades
+# the rate smoothly (30 -> 20 -> 15 Hz) and never backs up behind the reader.
+rate_hz: 30.0
+
+# Diagnostic printout period [s]; 0 = off. Used by the RAW path only: every
+# N seconds RawDepthSource prints its published count, per-frame produce time,
+# EMA rate, overruns and errors on stderr. The cleaned path ignores it. Keep at
+# 0 in production.
+profile_period_s: 0.0
+
+# ========== Real-time thread placement (shared Orin NX) ==========
+# The g1 control loop is the only hard-real-time thread in the process. It runs
+# SCHED_FIFO at --rt_prio, pinned by --rt_cpu. The two depth threads below MUST
+# sit strictly BELOW it in priority and, wherever a core can be spared, on a
+# different CPU. They exist to feed an observation; they must never be able to
+# preempt the loop that keeps the robot standing.
+#
+#   capture_rt   — blocks in rs2::pipeline::wait_for_frames(). Mostly asleep;
+#                  needs low latency at frame arrival, not throughput.
+#                  depth_source: raw runs its ONE thread (capture + convert +
+#                  publish) from this block too.
+#   inference_rt — depth_source: cleaned ONLY. The produce loop: TensorRT submit
+#                  + CUDA post-process + downsample. This is the thread that
+#                  shares the iGPU with the policy. The raw path has no second
+#                  thread, so it validates this block and then ignores it.
+#
+# TRAP — do NOT pin a CUDA-submitting thread to an isolcpus / nohz_full core.
+# CUDA's submission path relies on normal kernel scheduling (timers, work
+# queues, driver kthreads) that isolated + tickless cores deliberately starve;
+# submissions there stall for milliseconds at a time. The depth threads want a
+# FREE NON-ISOLATED core, not an isolated one. If no such core is free, leave
+# cpu_affinity at -1 and let the scheduler place them — that is strictly better
+# than pinning them onto an isolated core.
+#
+# Worked example — 8-core Orin NX, kernel cmdline `isolcpus=1 nohz_full=1
+# rcu_nocbs=1`:
+#
+#   CPU 0    DDS / Unitree SDK callbacks, OS housekeeping
+#   CPU 1    g1 control loop + policy inference
+#                                   SCHED_FIFO 80   (isolated)   --rt_cpu 1
+#   CPU 2-3  spare / interrupts
+#   CPU 4    depth capture          SCHED_FIFO 10   (NOT isolated)
+#   CPU 5    depth inference        SCHED_FIFO 10   (NOT isolated, CUDA submit)
+#   CPU 6-7  everything else
+#
+# These are STARTING POINTS, not tuned values. Confirm on your unit by comparing
+# the control loop's --trace_csv timing with and without the depth producer
+# (same policy and RT flags, back to back, >= 200 s each). If the period/jitter
+# columns move, the depth threads are not out of the way yet. Watch infer_ms too:
+# GPU contention shows up there and not in CPU-side jitter. --no_send on BOTH
+# runs: the depth-off run needs it (an image group with no depth inbox is
+# otherwise refused), and the on run must match. --start_in_control (allowed
+# only with --no_send) enters CONTROL at tick 0, so inference runs without a
+# gamepad. Run from deploy_cpp/:
+#
+#   ./build/deploy_g1_real --config configs/g1_v2_depth.yaml \
+#       --policy policy.plan --motion <motion.csv> --net eth0 \
+#       --no_send --start_in_control --trace_csv /tmp/depth_off.csv
+#   ./build/deploy_g1_real --config configs/g1_v2_depth.yaml \
+#       --policy policy.plan --motion <motion.csv> --net eth0 \
+#       --no_send --start_in_control --trace_csv /tmp/depth_on.csv \
+#       --depth_config configs/depth_d435i.yaml
+#
+# The depth run's trace also carries depth_seq / depth_stale / depth_age_ms
+# (see docs/reference.md, Loop timing traces).
+#
+# Defaults below are the safe, unprivileged configuration: plain SCHED_OTHER, no
+# pinning. Raise them only after the control loop's own RT setup is verified
+# (SCHED_FIFO needs cap_sys_nice; mlockall needs cap_ipc_lock).
+capture_rt:
+  fifo_priority: 0      # 0 = SCHED_OTHER. If raised: 1..99 and < the loop's priority.
+  cpu_affinity: -1      # -1 = unpinned. Example above: 4
+  lock_memory: false
+
+inference_rt:
+  fifo_priority: 0      # 0 = SCHED_OTHER. If raised: 1..99 and < the loop's priority.
+  cpu_affinity: -1      # -1 = unpinned. Example above: 5 — a NON-isolated core (CUDA)
+  lock_memory: false

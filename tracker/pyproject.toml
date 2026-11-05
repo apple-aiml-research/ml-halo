@@ -1,0 +1,33 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-tracker-deploy"
+version = "0.1.0"
+description = "HALO motion tracker deployment for the Unitree G1 (Python). Training lives in training/source/halo_tracker."
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+deploy = ["numpy", "pyyaml", "onnxruntime", "mujoco>=3.2", "flask"]
+depth = ["pyrealsense2", "opencv-python-headless"]
+
+[tool.setuptools]
+# The repository's tracker/ directory IS the `tracker` package (imported as `tracker.deploy...`).
+packages = [
+    "tracker",
+    "tracker.deploy",
+    "tracker.deploy.g1",
+    "tracker.deploy.utils",
+    "tracker.deploy.utils.backends",
+    "tracker.deploy.utils.core",
+    "tracker.deploy.utils.math",
+]
+
+[tool.setuptools.package-dir]
+"tracker" = "."

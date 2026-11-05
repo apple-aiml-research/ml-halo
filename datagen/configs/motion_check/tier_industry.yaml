@@ -1,0 +1,12 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# industry quality — the balanced tier (default strictness for sit). Overlays
+# default -> <task> -> here. Use: --tier industry.
+# On the 50 labeled sit episodes: ~7/10 good accepted, ~28/40 bad flagged.
+dyn_hop_prominence_m: 0.05
+feet_close_min_m: 0.125
+dyn_turn_rate_dps: 230.0
+dyn_drift_up_m: 0.03

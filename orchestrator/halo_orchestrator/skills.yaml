@@ -1,0 +1,129 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Declarative skill registry — single source of truth for the robot's skills.
+#
+# Adding a skill = appending a block here; registry.py feeds the prompt, schema enum and subtask_id from this file.
+#
+# Fields:
+#   name                   Skill name. `subtask_id` = index in this list (file order).
+#   generator_prompt       Text prompt sent to the motion generator for this skill.
+#                          Overridable per task via the task YAML `subtasks.<k>.prompt`.
+#   when_applicable        Precondition hint shown to the orchestrator: when this skill applies.
+#   completion_appearance  OPTIONAL. Neutral, observational description of what
+#                          finishing this skill tends to look like — information for
+#                          the model, never a code rule/threshold/instruction.
+#   target                 OPTIONAL. The object the skill acts on (box/person/chair/table/door).
+#   target_kind            object (a settle finishes the step) | living (it does not).
+#   pass_through           OPTIONAL. true = the motion goes through/under the object and out
+#                          the far side (complete once emerged, never retry).
+#
+# Ids are file order: append new skills at the END so existing ids are unchanged.
+skills:
+  - name: hold
+    # Not a motion skill: keep the current pose. Listed so "do nothing" is a valid orchestrator choice.
+    generator_prompt: "stand still"
+    when_applicable: >
+      nothing to act on yet, or acting now would commit the robot too early -- e.g. no plan
+      authored, scene uninterpretable, or the operator asked it to wait.
+    completion_appearance: >
+      what was awaited has arrived -- a plan now exists, or the operator gave an instruction.
+  - name: stand
+    # Not a motion skill: ease back to standing (`hold` freezes the current pose instead).
+    generator_prompt: "stand still"
+    when_applicable: >
+      the robot should get up into its normal standing pose and wait there -- e.g. after crouching,
+      crawling or pushing, before the next instruction. To STAY seated or crouched instead, use hold.
+    completion_appearance: >
+      the robot is upright in its standing pose and still.
+  - name: crouch_under
+    target: table
+    # Separate from crawl_through: a distinct generator prompt for a higher obstacle (shallow duck).
+    generator_prompt: "crouch under the table"
+    pass_through: true   # traversal through the gap, not a squat on the spot
+    when_applicable: >
+      VISUAL TEST: the tabletop is AT or ABOVE the camera -- you do NOT look down onto its top surface, you see its edge or underside.
+      THE DEFAULT FOR GETTING UNDER A TABLE. Use crouch_under whenever the robot can pass beneath
+      the obstacle by bending its knees and lowering its torso while staying ON ITS FEET -- i.e. the
+      underside of the table/counter/bar is at or above roughly the robot's CHEST (a tall desk,
+      standing desk, bar, high table). If you are unsure whether the gap is high enough, choose
+      crouch_under: it is faster and more stable than a crawl, and a crawl is only ever the fallback.
+    completion_appearance: >
+      the robot is out the FAR SIDE and back upright, the obstacle fully behind it. Still beneath it,
+      or still crouched under the edge, is mid-traversal rather than done.
+  - name: push_box
+    target: box
+    # Needs box contact (not a walk-to); checkpoint/prompt set via the task YAML.
+    generator_prompt: "push the box"
+    when_applicable: >
+      the robot is already right in front of a box/crate (e.g. just after go_to_box) and the task
+      is to MOVE it — push the box forward across the floor toward the goal spot. Not for
+      approaching a far box (use go_to_box first).
+    completion_appearance: >
+      the box has moved forward from where the robot first met it and now sits at/near the goal;
+      it is visibly displaced, not in its original spot.
+  - name: follow
+    target: person
+    # Same motion as go_to_human; differs in completion: a settle never finishes a follow.
+    generator_prompt: "walk to the person"
+    target_kind: living
+    when_applicable: >
+      STAY WITH A TARGET THAT CAN MOVE AWAY — usually a person or animal leading you somewhere, but
+      equally anything that does not stay put. Track it in the ego view and keep a comfortable
+      distance behind it. Pick this whenever the operator says FOLLOW, come with me, keep up, or
+      stay behind me. It is an INTERACTIVE task, not a way of getting somewhere: if you only need to
+      reach something and then do the next thing, use a go_to_* skill instead.
+    completion_appearance: >
+      KEEP FOLLOWING: a follow is NEVER finished on your own judgment — a living target can start
+      moving again at any moment, so keep following (retry) EVEN IF it is not moving right now. Do
+      NOT complete this step or switch to another task on your own; the only alternative is to ASK
+      the operator. The follow ends ONLY when the operator tells you to move on.
+  - name: sidewalk
+    target: door
+    generator_prompt: "side-step through the narrow gap"
+    when_applicable: >
+      a HALF-OPEN door (leaf partly blocking the doorway) or any gap too tight to walk
+      straight through; side-step through it. A FULLY OPEN door: just walk.
+  - name: go_to_chair
+    target: chair
+    # Delivers the ~1 m, facing-the-chair hand-off that `sit` needs (sit has a short approach range).
+    generator_prompt: "walk to the chair"
+    when_applicable: >
+      a chair sits across clear floor ahead, nothing to duck under or squeeze past; walk over to it
+      and stop about a metre in front, facing it. Use this BEFORE `sit` so the robot arrives in the
+      right spot; `sit` itself does not walk far.
+    completion_appearance: >
+      the chair is CLOSE and visible in the ego view (need NOT be centered) — the robot is roughly a
+      metre in front of it, facing it. Call `sit` next to actually sit down.
+  - name: sit
+    target: chair
+    generator_prompt: "sit down on the chair"
+    # Prompt text (when to use / done when) lives in functions.json.
+  - name: crawl_through
+    target: table
+    # "through" names a traversal ("under" reads as a position). generator_prompt must stay the
+    # trained conditioning string; rewording it changes the motion.
+    generator_prompt: "crawl under the desk"
+    pass_through: true   # complete once emerged; retrying re-runs the crawl and overshoots
+    # Prompt text (when to use / done when) lives in functions.json.
+  - name: go_to_box
+    target: box
+    generator_prompt: "walk to the box"
+    when_applicable: >
+      a box/crate sits across clear floor ahead, nothing to duck under or squeeze past; walk over
+      to it and stop in front of it.
+    completion_appearance: >
+      the box is CLOSE and visible in the ego view — it need NOT be centered; close is enough.
+  - name: go_to_human
+    target: person
+    # Terminal approach to a person: same motion as `follow`, but arriving finishes the step.
+    generator_prompt: "walk to the person"
+    when_applicable: >
+      a PERSON is across clear floor and you need to GET TO THEM and stop — greeting them, handing
+      something over, or simply positioning yourself there before the next task. Arriving finishes
+      this step. If instead you must STAY WITH them as they move away, use `follow`.
+    completion_appearance: >
+      the person is CLOSE and visible in the ego view — they need NOT be centered. Once the robot has
+      ARRIVED and stopped (a settle), this step is DONE — advance to the next step.

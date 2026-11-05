@@ -1,0 +1,25 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Build artifacts (C++ tracker nodes: system/build/<plat>/…)
+build/
+
+# Python packaging / caches
+*.egg-info/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Run outputs — default --output_dir values from
+# scripts/ and nodes/ (halo_serve stats, live_plan.npz).
+generator_output/
+eval_closedloop_sim_multi_output/
+# Timestamped run folders created in the working directory (<name>_YYYYmmdd_HHMMSS/)
+/*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]/
+# MuJoCo log written in the working directory
+MUJOCO_LOG.TXT
+
+# macOS
+.DS_Store

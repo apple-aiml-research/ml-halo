@@ -1,0 +1,27 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[package]
+
+# Semantic Versioning is used: https://semver.org/
+version = "0.1.0"
+
+# Description
+category = "isaaclab"
+
+title = "HALO motion tracker"
+author = "Apple Inc."
+maintainer = "Apple Inc."
+description="HALO motion-tracking tasks (PreRL / distillation / PostRL) for the Unitree G1 in Isaac Lab"
+repository = "https://github.com/apple-aiml-research/ml-halo"
+keywords = ["humanoid", "motion-tracking", "isaaclab"]
+
+[dependencies]
+"isaaclab" = {}
+"isaaclab_rl" = {}
+"isaaclab_tasks" = {}
+
+[[python.module]]
+name = "halo_tracker"

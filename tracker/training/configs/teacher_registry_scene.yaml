@@ -1,0 +1,47 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Teacher registry for scene multi-teacher distillation and multi-critic PostRL.
+#
+# One entry per PreRL teacher (task_type). Each motion clip is routed to the teacher trained on it:
+# ``path_substrings`` are matched against the FULL npz path (``filename_prefixes`` / ``filename_substrings``
+# against the file stem); ``priority`` breaks ties; a motion that matches no rule goes to the entry named after its
+# coarse category (``robot_only`` / ``object`` / ``terrain``) if one exists, else to ``_default``.
+#
+# Distillation loads each teacher's ``actor_state_dict`` (the distillation teacher); PostRL loads its
+# ``critic_state_dict`` (one warm-started critic per teacher). All teachers must use the PreRL architecture
+# (agents/rsl_rl_ppo_cfg.py::_simba_models), so train them with the Halo-MotionTracking-*-PreRL tasks.
+#
+# Paths are relative to the tracker/ directory (or absolute). Copy (or symlink) each teacher's final
+# logs/rsl_rl/motion_tracking_scene_prerl/<run>/model_<iter>.pt to the checkpoint_path below. Every listed
+# checkpoint must exist; remove the entries of teachers you do not train. ``task_id`` / ``motion_folder``
+# document how each teacher was trained.
+#
+# This template matches the three PreRL commands of training/README.md. HALO itself trained one robot-only
+# teacher per dataset: give each its own entry (e.g. path_substrings ["robot_only/lafan_dance"]) with a priority
+# above the generic robot_only entry's 10, or remove that entry; the highest-priority match wins.
+
+_default: robot_only              # fallback teacher for any motion no rule matches
+
+robot_only:                       # Halo-MotionTracking-Robot_Only-PreRL (free motion, flat ground)
+  task_id: Halo-MotionTracking-Robot_Only-PreRL
+  checkpoint_path: checkpoints/prerl/robot_only.pt
+  motion_folder: data/g1_processed/robot_only
+  path_substrings: ["robot_only/"]
+  priority: 10
+
+object_pushbox:                   # Halo-MotionTracking-Robot_Object-PreRL (push box, assets/objects/pushbox)
+  task_id: Halo-MotionTracking-Robot_Object-PreRL
+  checkpoint_path: checkpoints/prerl/object_pushbox.pt
+  motion_folder: data/g1_processed/robot-object/pushbox
+  filename_prefixes: ["push_v2"]
+  priority: 10
+
+labsofa:                          # Halo-MotionTracking-Robot_Terrain-PreRL (sit on the lab sofa, assets/objects/labsofa)
+  task_id: Halo-MotionTracking-Robot_Terrain-PreRL
+  checkpoint_path: checkpoints/prerl/labsofa.pt
+  motion_folder: data/g1_processed/robot-terrain/labsofa
+  filename_prefixes: ["labsofa_"]
+  priority: 10

@@ -1,0 +1,38 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-generator"
+version = "0.1.0"
+description = "Open-vocabulary motion generation package."
+requires-python = ">=3.10"
+# What loading + running a checkpoint needs (training extras are in requirements.txt).
+dependencies = [
+    "torch>=2.1",
+    "torchvision",
+    "numpy",
+    "pyyaml",
+    "pyarrow>=12",
+    "transformers",   # generator/setup.sh pins the exact build (Qwen3.5)
+    "huggingface_hub",
+]
+
+[tool.setuptools]
+packages = [
+    "generator",
+    "generator.configs",
+    "generator.data",
+    "generator.models",
+    "generator.scripts",
+    "generator.training",
+    "generator.evaluation",
+]
+
+[tool.setuptools.package-dir]
+"generator" = "."

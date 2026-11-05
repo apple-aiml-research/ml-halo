@@ -1,0 +1,48 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# Multi-task bedroom task (bedroom_course.xml: only the door and the armchair): go through the half-open door,
+# then sit on the armchair. The `instruction:` is planned at start;
+# the orchestrator (local model co-served on the generator's halo_serve engine) plans and switches the subtasks.
+#   python system/halo_system/scripts/run_sim.py --task_config system/halo_system/scripts/configs/multi_task/door_then_sit.yaml --web
+name: door_then_sit
+instruction: Go through the half-open door, then sit on the chair.
+initial_subtask: hold
+subtasks:
+  hold:
+    prompt: stand still
+  stand:
+    prompt: stand still
+  crouch_under:
+    prompt: crouch under the table
+  push_box:
+    prompt: push box
+  sidewalk:
+    prompt: Go through the half-open door
+  go_to_chair:
+    prompt: walk to armchair
+  sit:
+    prompt: sit on arm_chair
+    rebase_robot_when_quiet: true   # anchor on the robot once sit's plan is quiet
+  crawl_through:
+    prompt: crawl under the table
+  go_to_box:
+    prompt: walk to box
+scene_xml: assets/scenes/bedroom/bedroom_course.xml
+start:
+  pos:
+  - 3.700
+  - 2.100
+  - 0.79
+  yaw: 0.0
+# Models: not in the repository. Replace each <...> with your own file (see "Tasks" in
+# system/README.md). One generator and one tracker serve every subtask.
+checkpoint: <your_generator_checkpoint.pt>   # generator weights
+gen_config: <your_generator_config.yaml>     # the generator config the checkpoint was trained with
+policy_path: <your_tracker_policy.onnx>     # proprioceptive tracker policy ONNX (pairs with robot_config)
+robot_config: tracker/deploy_cpp/configs/g1_v2_sim.yaml
+duration: 0
+gen_interval: 0.4        # seconds between generations
+halo_serve: true

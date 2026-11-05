@@ -1,0 +1,11 @@
+{
+  "_comment": "OAK fisheye intrinsics — calibration handoff 2026-05-18. Kannala-Brandt 4-coeff (cv2.fisheye) model.",
+  "width": 1280,
+  "height": 800,
+  "fx": 566.49554064,
+  "fy": 566.78558951,
+  "cx": 642.80704971,
+  "cy": 410.84365973,
+  "distortion_model": "fisheye_kannala_brandt",
+  "distortion_coeffs": [-0.01465799, 0.0642358, -0.07535982, 0.0304101]
+}

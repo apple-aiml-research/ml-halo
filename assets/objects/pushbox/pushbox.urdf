@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<!--
+pushbox: the box pushed in the push-box clips (push_v2_*).
+
+An empty cardboard moving box, 0.46 x 0.50 x 0.561264 m, 1.0 kg nominal. It is a free rigid body so the
+robot pushes it physically in simulation; the object_pos_w / object_quat_w trajectories stored in each clip
+are the tracking reference. Training randomizes its friction (0.6-0.8) and adds 0.0-0.5 kg of mass.
+
+The link is named box_link because the training scene spawns it at {ENV_REGEX_NS}/Box and the depth and
+height-map ray casters target /Box/box_link.
+-->
+<robot name="pushbox">
+  <link name="box_link">
+    <inertial>
+      <mass value="1.0"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.047085" ixy="0" ixz="0" iyy="0.043885" iyz="0" izz="0.038467"/>
+    </inertial>
+    <contact>
+      <lateral_friction value="0.75"/>
+      <rolling_friction value="0.05"/>
+      <stiffness value="30000"/>
+      <damping value="1000"/>
+    </contact>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.46 0.50 0.561264"/>
+      </geometry>
+      <material name="cardboard">
+        <color rgba="0.75 0.65 0.45 1.0"/>
+      </material>
+    </visual>
+    <collision name="pushbox">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.46 0.50 0.561264"/>
+      </geometry>
+    </collision>
+    <dynamics damping="0.1"/>
+  </link>
+</robot>

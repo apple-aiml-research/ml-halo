@@ -1,0 +1,94 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": { "major": 3, "minor": 22, "patch": 0 },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5"
+            }
+        },
+        {
+            "name": "debug",
+            "inherits": "base",
+            "displayName": "Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "debug-sanitize",
+            "inherits": "debug",
+            "displayName": "Debug + ASan/UBSan",
+            "cacheVariables": {
+                "RT_DEPLOY_ENABLE_SANITIZERS": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "inherits": "base",
+            "displayName": "Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "relwithdebinfo",
+            "inherits": "base",
+            "displayName": "RelWithDebInfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "release-rt",
+            "inherits": "base",
+            "displayName": "Release-RT (auto-detect Jetson platform)",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release-RT",
+                "RT_DEPLOY_JETSON_PLATFORM": "auto"
+            }
+        },
+        {
+            "name": "release-rt-orin",
+            "inherits": "release-rt",
+            "displayName": "Release-RT (Jetson Orin: JetPack 5 or 6, CUDA 11.4/12, TRT 8.5/10)",
+            "cacheVariables": {
+                "RT_DEPLOY_JETSON_PLATFORM": "orin"
+            }
+        },
+        {
+            "name": "release-rt-thor",
+            "inherits": "release-rt",
+            "displayName": "Release-RT (Jetson Thor, JetPack 7, CUDA 13, TRT 10)",
+            "cacheVariables": {
+                "RT_DEPLOY_JETSON_PLATFORM": "thor"
+            }
+        },
+        {
+            "name": "release-offline",
+            "inherits": "release",
+            "displayName": "Release (offline / air-gapped target, vendored third_party/)",
+            "description": "For hosts without internet (e.g. an onboard robot computer). Run tools/vendor_third_party.sh on a connected machine first, rsync the project (including third_party/), then configure with this preset.",
+            "cacheVariables": {
+                "FETCHCONTENT_FULLY_DISCONNECTED": "TRUE",
+                "FETCHCONTENT_SOURCE_DIR_EIGEN": "${sourceDir}/third_party/eigen",
+                "FETCHCONTENT_SOURCE_DIR_YAML-CPP": "${sourceDir}/third_party/yaml-cpp"
+            }
+        }
+    ],
+    "buildPresets": [
+        { "name": "debug",            "configurePreset": "debug" },
+        { "name": "debug-sanitize",   "configurePreset": "debug-sanitize" },
+        { "name": "release",          "configurePreset": "release" },
+        { "name": "relwithdebinfo",   "configurePreset": "relwithdebinfo" },
+        { "name": "release-rt",       "configurePreset": "release-rt" },
+        { "name": "release-rt-orin",  "configurePreset": "release-rt-orin" },
+        { "name": "release-rt-thor",  "configurePreset": "release-rt-thor" },
+        { "name": "release-offline",  "configurePreset": "release-offline" }
+    ]
+}

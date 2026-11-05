@@ -1,0 +1,88 @@
+//
+// For licensing see accompanying LICENSE file.
+// Copyright (C) 2026 Apple Inc. All Rights Reserved.
+//
+
+syntax = "proto3";
+
+// State / telemetry domain for the halo_comm middleware.
+//
+// Used by the `g1/get_state` service (REQ/REP) AND the `g1/state` topic
+// (PUB/SUB, 50 Hz). The same RobotState message serves both: the topic
+// simply leaves `image` unset (images only ride the REP get_state path).
+//
+// Field-number stability is the contract — never renumber or reuse a tag.
+// New fields must be appended with fresh tags (proto3 ignores unknown fields,
+// so old readers stay compatible).
+
+package motion_msgs;
+
+// Request payload for the get_state service. Empty today (mirrors the legacy
+// {"cmd":"get_state"} ping); reserved for future filters/flags.
+message StateRequest {}
+
+// Optional ghost / reference-motion trailer (the desired motion the tracker is
+// currently following). Quaternion is wxyz (matches the IMU convention).
+message RefMotion {
+  repeated double pos       = 1;  // 3  : world xyz
+  repeated double quat_wxyz = 2;  // 4  : wxyz
+  repeated double joints    = 3;  // 29 : deployment order (matches RobotState.joint_pos)
+}
+
+// Optional ego-camera frame. `rgb` is width*height*channels raw bytes,
+// row-major, top-down. Only sent on the REP get_state path, never the topic.
+message Image {
+  int32 width    = 1;
+  int32 height   = 2;
+  int32 channels = 3;  // 3 = RGB
+  bytes rgb      = 4;
+}
+
+// ProprioDepth depth frame, PUBLISHED BY THE C++ TRACKER on g1/depth (port 5553) for live
+// viewing (studio). The policy's own depth never goes over the wire.
+message DepthImage {
+  int32  width       = 1;
+  int32  height      = 2;
+  bytes  data        = 3;  // width*height float32 LE, row-major top-down, metres (raw)
+  int32  tick        = 4;  // producer frame counter (DepthFrame.seq)
+  reserved 5, 6, 7;
+}
+
+// Robot state snapshot. Reply for get_state, message for the g1/state topic.
+// Replaces the legacy hand-packed 292-byte (+trailers) wire format 1:1.
+message RobotState {
+  repeated double joint_pos     = 1;  // 29 : deployment order
+  repeated double imu_quat_wxyz = 2;  // 4  : wxyz
+  repeated double base_pos      = 3;  // 3  : odom xyz (fallback (0,0,0.75))
+  int32           tick          = 4;  // control-loop motion-reference counter
+  RefMotion       ref_motion    = 5;  // optional (absent => not shipped)
+  Image           image         = 6;  // optional (REP path only; never topic)
+  bool            tracker_ready = 7; // latched true when tracker is ready to accept plans (sim: auto; real: after A press)
+  reserved 8, 9;
+  uint32          remote_buttons = 10; // real robot: Unitree wireless-remote button bits (bit i = key_map
+                                       // index: R1 0, L1 1, Start 2, Select 3, R2 4, L2 5, F1 6, F2 7,
+                                       // A 8, B 9, X 10, Y 11, Up 12, Right 13, Down 14, Left 15). 0 in sim.
+}
+
+// Ego-camera frame published by the GENERATOR on the g1/obs topic (PUB/SUB).
+// Source-agnostic: in sim it is the frame the generator already pulled from
+// get_state (so no extra render); on the real robot it is the generator's own
+// OAK camera frame (the generator owns the camera). The
+// generator only FORWARDS a frame it already holds — it never renders.
+//
+// `data` is either raw RGB bytes (encoding=RAW, width*height*channels,
+// row-major top-down) or a JPEG byte stream (encoding=JPEG). Prefer JPEG on the
+// real robot: raw 1280x800x3 = ~3 MiB/frame floods Wi-Fi, JPEG q80 ~= 100 KB.
+message ObsImage {
+  enum Encoding {
+    RAW  = 0;   // data = width*height*channels raw uint8 RGB, row-major top-down
+    JPEG = 1;   // data = JPEG byte stream (decode for width/height/channels)
+  }
+  int32    width    = 1;   // decoded pixel width  (informational for JPEG)
+  int32    height   = 2;   // decoded pixel height (informational for JPEG)
+  int32    channels = 3;   // 3 = RGB
+  bytes    data     = 4;   // raw RGB or JPEG per `encoding`
+  Encoding encoding = 5;
+  int32    tick     = 6;   // generator frame counter (staleness / FPS)
+  double   stamp    = 7;   // generator wall-clock seconds at capture
+}

@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "Please consider citing our paper if you find this work useful in your research."
+title: "HALO: Perceptive Humanoid Motion from Simulation"
+url: "https://github.com/apple-aiml-research/ml-halo"
+authors:
+  - family-names: Hu
+    given-names: Siyuan
+  - family-names: Abuduweili
+    given-names: Abulikemu
+  - family-names: Meng
+    given-names: Yue
+  - family-names: Liu
+    given-names: Shipeng
+  - family-names: Leboutet
+    given-names: Quentin
+  - family-names: Chen
+    given-names: Chen
+  - family-names: Müller
+    given-names: Matthias
+  - family-names: Koltun
+    given-names: Vladlen
+preferred-citation:
+  # TODO(release): add the arXiv identifier and URL once the preprint is posted.
+  type: article
+  journal: "arXiv preprint"
+  title: "Perceptive Humanoid Motion from Simulation"
+  authors:
+    - family-names: Hu
+      given-names: Siyuan
+    - family-names: Abuduweili
+      given-names: Abulikemu
+    - family-names: Meng
+      given-names: Yue
+    - family-names: Liu
+      given-names: Shipeng
+    - family-names: Leboutet
+      given-names: Quentin
+    - family-names: Chen
+      given-names: Chen
+    - family-names: Müller
+      given-names: Matthias
+    - family-names: Koltun
+      given-names: Vladlen
+  year: 2026

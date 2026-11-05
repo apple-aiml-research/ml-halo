@@ -1,0 +1,28 @@
+{
+  "_README": [
+    "Function/tool descriptions handed to T1 so it can select a CALL SEQUENCE, not just skill names.",
+    "",
+    "This file is an OVERLAY on skills.yaml, not a replacement. skills.yaml stays the single source",
+    "of skill IDENTITY -- the names here must already exist there, and the loader refuses to start if",
+    "one does not (a typo would otherwise silently produce a function the model can name but the",
+    "registry cannot route). Skills absent from this file still render from skills.yaml as before, so",
+    "adding an entry here is additive and never drops a skill.",
+    "",
+    "What this file adds over skills.yaml: a call-style `description` and `completion_cue`.",
+    "",
+    "Edit freely -- it is read at orchestrator startup, no code change needed. Keep `name` in sync with",
+    "skills.yaml; everything else is prose for the model."
+  ],
+  "functions": [
+    {
+      "name": "crawl_through",
+      "description": "VISUAL TEST: you LOOK DOWN onto the tabletop -- its top surface is clearly visible from above, i.e. the table is lower than the camera. FALLBACK ONLY: crawl THROUGH the gap beneath an obstacle that is TOO LOW TO CROUCH UNDER -- its underside is clearly below the robot's chest, around waist height or lower (low desk, coffee table, low bar or beam), so it needs hands-and-knees. For any table the robot can clear by bending its knees on its feet (underside at or above chest height: tall desk, standing desk, bar, high table) use crouch_under instead -- crouch is the default, never crawl under a high table. Handles the full traversal: enter on one side, emerge on the far side. Completion is confirmed only when the obstacle is fully behind the robot and open space is ahead.",
+      "completion_cue": "Obstacle is fully behind the robot; open space is visible ahead. Robot is NOT still beneath the obstacle."
+    },
+    {
+      "name": "sit",
+      "description": "Approach a seat or chair that is directly visible ahead with a clear, unobstructed path, and sit down. Do NOT invoke if a low obstacle lies between the robot and the seat — resolve the obstacle first (e.g. crawl_through).",
+      "completion_cue": "Judge from mission context and current ego view; no fixed visual cue documented."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# sidestep_door: single task in the bedroom scene. Side-step through the half-open door in the partition; starts 0.9 m before the doorway.
+#   python system/halo_system/scripts/run_sim.py --task_config system/halo_system/scripts/configs/single_task/sidestep_door.yaml --web
+name: task_sidestep_door
+agentic: false
+prompt: Go through the half-open door
+instruction: ''
+scene_xml: assets/scenes/bedroom/bedroom.xml
+start:
+  pos:
+  - 3.700
+  - 2.100
+  - 0.79
+  yaw: 0.0
+# Models: not in the repository. Replace each <...> with your own file (see "Tasks" in
+# system/README.md). One generator and one tracker serve every subtask.
+checkpoint: <your_generator_checkpoint.pt>   # generator weights
+gen_config: <your_generator_config.yaml>     # the generator config the checkpoint was trained with
+policy_path: <your_tracker_policy.onnx>     # tracker policy ONNX with a depth input (pairs with robot_config)
+robot_config: tracker/deploy_cpp/configs/g1_v2_depth_sim.yaml
+duration: 0
+initial_subtask: sidewalk
+subtasks:
+  sidewalk:
+    prompt: Go through the half-open door
+orchestrator:
+  enabled: false
+hide_bodies:   # objects this skill does not use
+- human
+- box_object
+- object5_root
+- chair

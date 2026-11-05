@@ -1,0 +1,418 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+# G1 tracker configuration — depth student, MuJoCo sim variant.
+# Identical to g1_v2_depth.yaml except the physics step: 0.5 ms x 40 instead of
+# 5 ms x 4 (same 50 Hz policy). The 5 ms step is too coarse for the sit / push
+# contacts in sim; on the robot use g1_v2_depth.yaml.
+#
+# G1 tracker configuration — depth student (3-input policy: proprio + history + depth)
+# Builds on BeyondMimic whole_body_tracking (Copyright (c) 2024, The Isaac Lab Project Developers, MIT License).
+# Motion tracking with standard PD control, plus a depth observation from the
+# torso-mounted D435i.
+#
+# This is g1_v2.yaml with a `student_depth` group added to the observation spec.
+# Everything numeric outside that group (29 joints, PD gains,
+# action_scale, default pose, torque limits, joint orders) is inherited verbatim.
+#
+# The `observation:` block below is the single source of truth for the obs
+# layout, and it defines THREE ONNX inputs:
+#   obs             flat  (1, 434)      proprio + 5-frame tracking horizon + anchor
+#   policy_temporal stack (1, 30, 166)  the same terms, 30-frame history
+#   student_depth   image (1, 1, 48, 84) clip[0.2,2.5] m -> log1p
+# So this file REQUIRES a 3-input policy export. A 1- or 2-input .plan/.onnx is
+# rejected at ControlLoop construction rather than silently zero-filled.
+#
+# On the robot the depth frames come from the D435i producer configured by
+# configs/depth_d435i.yaml (rt_deploy::vision, built with
+# -DRT_DEPLOY_WITH_REALSENSE=ON): `deploy_g1_real --depth_config
+# configs/depth_d435i.yaml` starts it and feeds the control loop's depth inbox.
+# In sim, `deploy_g1_mujoco --depth_render` renders the same input. Without a
+# depth source this config is refused at start (kConfigError), except under
+# deploy_g1_real --no_send (dry run: far plane fed, warning logged). See
+# docs/depth.md.
+#
+# NOTES
+#   * `xml_path` is the same as g1_v2.yaml: scene_g1_29dof_macmini_sysid.xml, the lab
+#     robot that training simulates. It has no depth camera; `deploy_g1_mujoco --depth_render`
+#     injects the depth camera on torso_link at load (MjSpec) to render the
+#     student_depth input; without that flag this config is refused at start.
+#   * `max_torque` holds the G1 motor torque ratings (see the Torque Limits block).
+#     The MJCF actuator range (the identified limits) is the sim's hard motor cap; per
+#     joint the tighter of the two applies.
+
+# ========== Robot Identification ==========
+robot_name: g1
+
+# ========== MuJoCo Model Path ==========
+xml_path: '{ROOT_DIR}/assets/robots/g1/mjcf/scene_g1_29dof_macmini_sysid.xml'
+
+# ========== Simulation Timing ==========
+simulation_dt: 0.0005    # 2 kHz MuJoCo physics: fine enough for seat / box contacts
+control_decimation: 40    # still a 50 Hz policy
+
+# ========== Timing ==========
+control_dt: 0.02          # 50 Hz control frequency
+
+# ========== Dimensions and clipping ==========
+num_joints: 29
+clip_observation: 100.0
+clip_action: 100
+
+# ========== Joint Orders ==========
+training_joint_order:
+- left_hip_pitch_joint
+- right_hip_pitch_joint
+- waist_yaw_joint
+- left_hip_roll_joint
+- right_hip_roll_joint
+- waist_roll_joint
+- left_hip_yaw_joint
+- right_hip_yaw_joint
+- waist_pitch_joint
+- left_knee_joint
+- right_knee_joint
+- left_shoulder_pitch_joint
+- right_shoulder_pitch_joint
+- left_ankle_pitch_joint
+- right_ankle_pitch_joint
+- left_shoulder_roll_joint
+- right_shoulder_roll_joint
+- left_ankle_roll_joint
+- right_ankle_roll_joint
+- left_shoulder_yaw_joint
+- right_shoulder_yaw_joint
+- left_elbow_joint
+- right_elbow_joint
+- left_wrist_roll_joint
+- right_wrist_roll_joint
+- left_wrist_pitch_joint
+- right_wrist_pitch_joint
+- left_wrist_yaw_joint
+- right_wrist_yaw_joint
+
+deployment_joint_order:
+- left_hip_pitch_joint
+- left_hip_roll_joint
+- left_hip_yaw_joint
+- left_knee_joint
+- left_ankle_pitch_joint
+- left_ankle_roll_joint
+- right_hip_pitch_joint
+- right_hip_roll_joint
+- right_hip_yaw_joint
+- right_knee_joint
+- right_ankle_pitch_joint
+- right_ankle_roll_joint
+- waist_yaw_joint
+- waist_roll_joint
+- waist_pitch_joint
+- left_shoulder_pitch_joint
+- left_shoulder_roll_joint
+- left_shoulder_yaw_joint
+- left_elbow_joint
+- left_wrist_roll_joint
+- left_wrist_pitch_joint
+- left_wrist_yaw_joint
+- right_shoulder_pitch_joint
+- right_shoulder_roll_joint
+- right_shoulder_yaw_joint
+- right_elbow_joint
+- right_wrist_roll_joint
+- right_wrist_pitch_joint
+- right_wrist_yaw_joint
+
+# ========== Default Joint Angles (deployment order) ==========
+default_angles:
+- -0.312
+- 0.0
+- 0.0
+- 0.669
+- -0.363
+- 0.0
+- -0.312
+- 0.0
+- 0.0
+- 0.669
+- -0.363
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.2
+- 0.2
+- 0.0
+- 0.6
+- 0.0
+- 0.0
+- 0.0
+- 0.2
+- -0.2
+- 0.0
+- 0.6
+- 0.0
+- 0.0
+- 0.0
+
+# ========== Action Scaling (deployment order) ==========
+action_scale:
+- 0.5475464652142303
+- 0.3506614663788243
+- 0.5475464652142303
+- 0.3506614663788243
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.5475464652142303
+- 0.3506614663788243
+- 0.5475464652142303
+- 0.3506614663788243
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.5475464652142303
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.07450087032950714
+- 0.07450087032950714
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.43857731392336724
+- 0.07450087032950714
+- 0.07450087032950714
+
+# ========== PD Gains (deployment order) ==========
+joint_kps:
+- 40.17923847137318
+- 99.09842777666113
+- 40.17923847137318
+- 99.09842777666113
+- 28.50124619574858
+- 28.50124619574858
+- 40.17923847137318
+- 99.09842777666113
+- 40.17923847137318
+- 99.09842777666113
+- 28.50124619574858
+- 28.50124619574858
+- 40.17923847137318
+- 28.50124619574858
+- 28.50124619574858
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 16.77832748089279
+- 16.77832748089279
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 14.25062309787429
+- 16.77832748089279
+- 16.77832748089279
+
+joint_kds:
+- 2.5578897650279457
+- 6.3088018534966395
+- 2.5578897650279457
+- 6.3088018534966395
+- 1.814445686584846
+- 1.814445686584846
+- 2.5578897650279457
+- 6.3088018534966395
+- 2.5578897650279457
+- 6.3088018534966395
+- 1.814445686584846
+- 1.814445686584846
+- 2.5578897650279457
+- 1.814445686584846
+- 1.814445686584846
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 1.06814150219
+- 1.06814150219
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 0.907222843292423
+- 1.06814150219
+- 1.06814150219
+
+# ========== Torque Limits (deployment order, Nm) ==========
+# Unitree G1 motor torque ratings. Used by the torque-aware action clip and as the MuJoCo
+# torque clamp. In sim the MJCF actuator range (the lab robot's identified per-joint limits,
+# the `effort` that training clips at in assets/robots/g1/urdf/g1_29dof_macmini_sysid_isaaclab.json)
+# also applies, and the tighter of the two wins.
+max_torque:
+- 88
+- 139
+- 88
+- 139
+- 50
+- 50
+- 88
+- 139
+- 88
+- 139
+- 50
+- 50
+- 88
+- 50
+- 50
+- 25
+- 25
+- 25
+- 25
+- 25
+- 5
+- 5
+- 25
+- 25
+- 25
+- 25
+- 25
+- 5
+- 5
+
+# ========== Sim plant drive (MuJoCo only; deployment order) ==========
+# The lab robot's identified drive: its motor realises the commanded gains x these scales, which are the stiffness /
+# damping training simulates (`stiffness_mult` / `damping_mult` in
+# assets/robots/g1/urdf/g1_29dof_macmini_sysid_isaaclab.json). The MuJoCo sim applies them; the real robot ignores both.
+sim_kp_scale: [0.7865, 0.7799, 0.8146, 0.7752, 0.8577, 0.8338, 0.8112, 0.7938, 0.8114, 0.7799, 0.8577, 0.8503, 0.8227, 0.9018, 0.8301, 0.883, 0.8798, 0.8722, 0.881, 0.83, 0.8304, 0.8322, 0.9041, 0.8833, 0.8255, 0.8754, 0.8407, 0.8286, 0.8307]
+sim_kd_scale: [0.7219, 0.7024, 0.7515, 0.7136, 1.2401, 0.4743, 0.7444, 0.7143, 0.7467, 0.7156, 1.2401, 0.4812, 0.7507, 0.5467, 1.2522, 0.7609, 0.7622, 0.7514, 0.7667, 0.7412, 0.8202, 0.8141, 0.7747, 0.7646, 0.7156, 0.7606, 0.7501, 0.818, 0.8121]
+
+# ========== Standing Pose (deployment order) ==========
+# Reference motion when no motion file is loaded, and the pose held after
+# switching to standing (MotionSwitcher).
+standing_joint_pos:
+- -0.189917
+- 0.159601
+- 0.392711
+- 0.378745
+- -0.283224
+- -0.003686
+- -0.195073
+- -0.139096
+- -0.229862
+- 0.289042
+- -0.252450
+- 0.114067
+- 0.001023
+- -0.022235
+- -0.014125
+- 0.103968  # left_shoulder_pitch (0.203968 - 0.1)
+- 0.467532  # left_shoulder_roll (0.117532 + 0.35)
+- -0.082820
+- 0.807123
+- 0.715207
+- 0.202430
+- 0.031821
+- 0.170904  # right_shoulder_pitch (0.270904 - 0.1)
+- -0.424692  # right_shoulder_roll (-0.074692 - 0.35)
+- -0.299234
+- 0.698233
+- -0.715207
+- 0.202430
+- 0.031821
+
+standing_base_pos:
+- 0.0
+- 0.0
+- 0.76
+
+standing_base_quat_wxyz:
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+
+# ---------------------------------------------------------------------------
+# Observation spec (config-driven ObservationBuilder). This is the SINGLE
+# source of truth for the obs layout: the ObservationBuilder assembles the ONNX
+# feed tensors from this block (the Python controller, tracker/deploy/g1/
+# g1_controller.py, reads the same block from its own config).
+#
+# groups map 1:1 to ONNX inputs (name -> tensor). Term order is significant.
+#   flat  group -> (1, sum(dims))            [actor input "obs"]
+#   stack group -> (1, history, sum(dims))   [temporal CNN input]
+# Reference terms (tracking_command_partial) are sampled from the loaded motion;
+# `horizon: K` (flat) takes the current frame and the next K-1 frames, ordered
+# t+K-1 ... t (current frame last), flattened `term_major` (each subfield over
+# all K frames, then the next subfield).
+# ---------------------------------------------------------------------------
+observation:
+  anchor_mode: odom      # required; the only supported value (anchor = odometry pose)
+  history_length: 30
+  groups:
+    obs:
+      layout: flat
+      terms:
+        - base_ang_vel          # 3
+        - proj_gravity          # 3
+        - joint_pos_rel         # 29
+        - joint_vel_rel         # 29
+        - last_action           # 29
+        - {name: tracking_command_partial, horizon: 5, flatten: term_major}  # 5*67=335
+        - motion_anchor_ori_b   # 6      -> total 434
+    policy_temporal:
+      layout: stack
+      history: 30
+      terms:
+        - base_ang_vel          # 3
+        - proj_gravity          # 3
+        - joint_pos_rel         # 29
+        - joint_vel_rel         # 29
+        - last_action           # 29
+        - motion_anchor_ori_b   # 6
+        - {name: tracking_command_partial}   # 67  -> per-frame 166, stacked (30,166)
+    # Depth student 3rd input: torso depth frame, encoded clip([0.2,2.5] m)->log1p
+    # ->(1,1,48,84). 'image' layout — a raw metric DepthFrame handed to the
+    # ObservationBuilder via set_depth() (RealSense D435i on real), NOT proprio
+    # terms. Group name MUST equal the ONNX input name. H*W must equal
+    # DepthFrame::kCount (48*84=4032).
+    student_depth:
+      layout: image
+      height: 48
+      width: 84
+      # ENCODE clip [near_m, far_m] — the obs contract. MANDATORY, no default.
+      #
+      # Must equal training's DEPTH_CLIP (tracker/training/.../g1/
+      # motion_tracking_scene_distill_cfg.py).
+      #
+      # Getting this wrong is silent: the tensor shape and the ONNX signature
+      # still match while every pixel is mis-scaled, and invalid / no-return
+      # pixels (encoded at the far clip) dominate a real D435i. At start-up
+      # g1/depth_clip_registry.cpp checks this value against the training clip
+      # and refuses to run on a mismatch (--allow_depth_clip_mismatch overrides).
+      #
+      # depth_d435i.yaml's clip_min_m/clip_max_m MUST equal these two numbers
+      # (apps/g1/depth_setup.hpp refuses to start a producer if they disagree).
+      clip: [0.2, 2.5]
+      # Control steps each depth frame is HELD for => depth at 50/N Hz.
+      #
+      # 2 (25 Hz) is what the tracker trains with (obs_decim=2 in the training
+      # depth term).
+      #
+      # APPLIED IN SIM ONLY, and that asymmetry is deliberate:
+      #   sim       a renderer synchronous with the control loop would emit a
+      #             fresh frame every tick = twice the training rate on the only
+      #             exteroceptive input, so the sim decimates its render cadence.
+      #   hardware  NOT applied. The D435i is asynchronous and already slower
+      #             than 50 Hz, so the sensor rate IS the hold; the correct
+      #             frame is the newest one and holding on top would only add
+      #             latency.
+      obs_decim: 2
+      encode: log1p

@@ -1,0 +1,25 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo-orchestrator"
+version = "0.1.0"
+description = "Mission orchestrator for halo: instruction + camera -> skill sequence, on a local model served by halo_serve."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pillow",    # ego frames are JPEG-encoded for the model
+    "pyyaml",
+]
+
+[tool.setuptools]
+packages = ["halo_orchestrator"]
+
+[tool.setuptools.package-data]
+halo_orchestrator = ["skills.yaml", "functions.json"]
